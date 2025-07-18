@@ -1,6 +1,18 @@
 {
   "rewrites": [
     {
+      "source": "/api/general/barbers",
+      "destination": "/api/admin?endpoint=barbers"
+    },
+    {
+      "source": "/api/general/services", 
+      "destination": "/api/admin?endpoint=services"
+    },
+    {
+      "source": "/api/reservations/all",
+      "destination": "/api/admin?endpoint=all-reservations"
+    },
+    {
       "source": "/api/reservations/available-hours/:date/:barberId",
       "destination": "/api/reservations/available-hours-query?date=$1&barberId=$2"
     },
