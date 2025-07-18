@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/reservations/available-hours/:date/:barberId",
+      "destination": "/api/reservations/available-hours-query?date=$1&barberId=$2"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }
