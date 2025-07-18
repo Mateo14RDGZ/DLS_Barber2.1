@@ -30,22 +30,26 @@ Sistema web completo para gestión de reservas de barbería desarrollado con tec
 ## 🛠️ Tecnologías
 
 ### Frontend
+
 - **HTML5** + **CSS3** + **JavaScript ES6**
 - **Responsive Design** con Flexbox y Grid
 - **Fetch API** para comunicación con backend
 
 ### Backend
+
 - **Node.js** + **Express.js**
 - **JWT** para autenticación
 - **bcryptjs** para hash de contraseñas
 - **CORS** configurado para desarrollo y producción
 
 ### Base de Datos
+
 - **SQLite** para desarrollo local
 - **PostgreSQL** para producción (Vercel Postgres)
 - **Migración automática** según entorno
 
 ### DevOps
+
 - **Vercel** para hosting y deployment
 - **Git** para control de versiones
 - **Environment Variables** para configuración
@@ -90,29 +94,34 @@ DLS Barber/
 ## 🚀 Instalación y Uso
 
 ### Prerrequisitos
+
 - Node.js 16 o superior
 - Git
 - Cuenta en Vercel (para producción)
 
 ### 1. Clonar el repositorio
+
 ```bash
 git clone https://github.com/tu-usuario/dls-barber.git
 cd dls-barber
 ```
 
 ### 2. Instalar dependencias
+
 ```bash
 cd backend
 npm install
 ```
 
 ### 3. Configurar variables de entorno
+
 ```bash
 cp backend/.env.example backend/.env
 # Editar .env con tus configuraciones
 ```
 
 ### 4. Iniciar en desarrollo
+
 ```bash
 cd backend
 npm start
@@ -125,11 +134,13 @@ El servidor estará disponible en `http://localhost:5000`
 ### Opción 1: Deploy automático con Vercel (Recomendado)
 
 1. **Conectar con GitHub:**
+
    - Fork o clona este repositorio
    - Ve a [vercel.com](https://vercel.com)
    - Conecta tu repositorio
 
 2. **Configurar base de datos:**
+
    ```bash
    # Crear Vercel Postgres
    vercel postgres create dls-barber-db
@@ -137,6 +148,7 @@ El servidor estará disponible en `http://localhost:5000`
    ```
 
 3. **Configurar variables de entorno en Vercel:**
+
    ```
    POSTGRES_URL=tu_url_postgres
    JWT_SECRET=tu_secret_seguro
@@ -155,18 +167,21 @@ Ver [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) para instrucciones detalladas.
 ## 📊 Funcionalidades
 
 ### 👤 Sistema de Usuarios
+
 - ✅ Registro de nuevos usuarios
 - ✅ Login/logout seguro
 - ✅ Gestión de perfiles
 - ✅ Roles (usuario/admin)
 
 ### 📅 Gestión de Reservas
+
 - ✅ Crear reservas con formulario intuitivo
 - ✅ Ver historial de citas
 - ✅ Cancelar reservas
 - ✅ Estados de reserva (pendiente, confirmada, completada)
 
 ### 👨‍💼 Panel Administrativo
+
 - ✅ Dashboard con estadísticas
 - ✅ Gestión completa de reservas
 - ✅ Administración de usuarios
@@ -174,6 +189,7 @@ Ver [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) para instrucciones detalladas.
 - ✅ Reportes y análisis
 
 ### 🔧 Características Técnicas
+
 - ✅ Autenticación JWT
 - ✅ Validación de datos
 - ✅ Manejo de errores
