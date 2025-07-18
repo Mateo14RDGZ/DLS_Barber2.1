@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <title>DLS BARBER - Reservas Profesionales | La Mejor Barbería</title>
+    <meta
+      name="description"
+      content="Reservá tu turno en DLS BARBER - La mejor barbería con estilo único y atención profesional personalizada"
+    />
+    <meta
+      name="keywords"
+      content="barbería, corte de pelo, barber, reservas, estilo, DLS BARBER"
+    />
+
+    <!-- Favicons y meta tags -->
+    <link rel="icon" type="image/png" href="dls-logo-updated.png" />
+
+    <!-- Librerías externas -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+      rel="stylesheet"
+    />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="styles.css?v=28.0" />
+  </head>
+  <body>
+    <script>
+      // Verificar si el usuario está autenticado
+      const token = localStorage.getItem("token");
+      if (token) {
+        // Verificar si el token es válido
+        fetch("http://localhost:5000/api/auth/verify", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              // Token válido, ir al dashboard
+              window.location.href = "dashboard.html";
+            } else {
+              // Token inválido, limpiar y ir al login
+              localStorage.removeItem("token");
+              window.location.href = "login.html";
+            }
+          })
+          .catch(() => {
+            // Error de conexión, ir al login
+            window.location.href = "login.html";
+          });
+      } else {
+        // No hay token, ir al login
+        window.location.href = "login.html";
+      }
+    </script>
+
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: var(--color-background);
+      "
+    >
+      <div style="text-align: center; color: var(--color-white)">
+        <h1
+          style="
+            font-family: 'Montserrat', sans-serif;
+            color: var(--color-primary-red);
+          "
+        >
+          💈 DLS BARBER
+        </h1>
+        <p>Redirigiendo...</p>
+      </div>
+    </div>
+  </body>
+</html>

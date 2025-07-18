@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - DLS BARBER</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .auth-container {
+        max-width: 400px;
+        margin: 100px auto;
+        padding: 40px;
+        background: rgba(17, 24, 39, 0.95);
+        border-radius: 20px;
+        border: 1px solid rgba(20, 184, 166, 0.3);
+      }
+
+      .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .auth-title {
+        font-family: "Montserrat", sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--color-white);
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .auth-input {
+        padding: 15px;
+        border: 1px solid rgba(20, 184, 166, 0.3);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--color-white);
+        font-size: 1rem;
+      }
+
+      .auth-input:focus {
+        outline: none;
+        border-color: var(--color-primary-red);
+      }
+
+      .auth-button {
+        padding: 15px;
+        background: var(--color-primary-red);
+        color: var(--color-white);
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .auth-button:hover {
+        background: var(--color-primary-red-hover);
+        transform: translateY(-2px);
+      }
+
+      .auth-link {
+        text-align: center;
+        color: var(--color-primary-red);
+        text-decoration: none;
+        margin-top: 20px;
+      }
+
+      .auth-link:hover {
+        text-decoration: underline;
+      }
+
+      .error-message {
+        color: #ff4444;
+        text-align: center;
+        padding: 10px;
+        background: rgba(255, 68, 68, 0.1);
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+
+      .success-message {
+        color: #44ff44;
+        text-align: center;
+        padding: 10px;
+        background: rgba(68, 255, 68, 0.1);
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <h1 class="auth-title">💈 DLS BARBER</h1>
+      <h2 class="auth-title" style="font-size: 1.5rem; margin-bottom: 20px">
+        Iniciar Sesión
+      </h2>
+
+      <div id="message-container"></div>
+
+      <form id="login-form" class="auth-form">
+        <input
+          type="email"
+          id="email"
+          class="auth-input"
+          placeholder="Email"
+          required
+        />
+        <input
+          type="password"
+          id="password"
+          class="auth-input"
+          placeholder="Contraseña"
+          required
+        />
+        <button type="submit" class="auth-button">Iniciar Sesión</button>
+      </form>
+
+      <a href="register.html" class="auth-link"
+        >¿No tienes cuenta? Regístrate aquí</a
+      >
+    </div>
+
+    <script src="auth.js"></script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "dls-barber-system",
+  "version": "1.0.0",
+  "description": "Sistema completo de reservas para barbería DLS Barber",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "install-backend": "cd backend && npm install",
+    "migrate": "cd backend && node migrate.js",
+    "vercel-build": "cd backend && npm install"
+  },
+  "keywords": [
+    "barberia",
+    "reservas",
+    "nodejs",
+    "express",
+    "postgresql",
+    "vercel"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/dls-barber.git"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
