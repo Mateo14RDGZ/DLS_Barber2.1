@@ -1,5 +1,7 @@
-// Configuración de la API
-const API_BASE_URL = 'http://localhost:5000/api';
+// Configuración de la API - Detecta automáticamente el entorno
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api' 
+    : '/api';
 
 console.log('🔧 auth.js cargado');
 
