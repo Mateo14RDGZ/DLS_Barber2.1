@@ -1850,7 +1850,11 @@ button,
 }
 
 .reservation-card {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
   border: 1px solid rgba(20, 184, 166, 0.2);
   border-radius: 12px;
   padding: 20px;
@@ -1862,13 +1866,17 @@ button,
 }
 
 .reservation-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--color-accent-teal), var(--color-accent-blue));
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-teal),
+    var(--color-accent-blue)
+  );
   border-radius: 12px 12px 0 0;
 }
 
@@ -1958,12 +1966,20 @@ button,
 }
 
 #reservations-list::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--color-accent-teal), var(--color-accent-blue));
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-teal),
+    var(--color-accent-blue)
+  );
   border-radius: 10px;
 }
 
 #reservations-list::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-accent-teal));
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-blue),
+    var(--color-accent-teal)
+  );
 }
 
 /* Responsive para reservas */
@@ -1972,21 +1988,172 @@ button,
     padding: 20px;
     margin-top: 20px;
   }
-  
+
   .reservation-card {
     padding: 15px;
   }
-  
+
   .reservation-card h4 {
     font-size: 1.1rem;
   }
-  
+
   .reservation-card p {
     font-size: 0.85rem;
   }
-  
+
   .status-badge {
     font-size: 0.7rem;
     padding: 4px 8px;
+  }
+}
+
+/* Reservations Header with Button */
+.reservations-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.btn-view-reservations {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-view-reservations:hover {
+  background: #b8860b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.reservations-modal {
+  background: white;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  background: var(--primary-color);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.close-modal:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+#modal-reservations-list .reservation-card {
+  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+#modal-reservations-list .reservation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+  .reservations-modal {
+    width: 95%;
+    max-height: 85vh;
+    margin: 20px;
+  }
+  
+  .modal-header {
+    padding: 15px;
+  }
+  
+  .modal-header h2 {
+    font-size: 20px;
+  }
+  
+  .modal-body {
+    padding: 15px;
+    max-height: 65vh;
+  }
+  
+  .reservations-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn-view-reservations {
+    width: 100%;
+    text-align: center;
   }
 }
