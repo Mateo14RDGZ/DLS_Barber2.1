@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
             
             // Obtener horarios configurados para el barbero y día
             const availableHours = await client.query(`
-                SELECT start_time 
+                SELECT DISTINCT start_time 
                 FROM available_hours 
                 WHERE barber_id = $1 AND day_of_week = $2 AND is_active = true
                 ORDER BY start_time
@@ -60,11 +60,12 @@ module.exports = async function handler(req, res) {
             
             console.log(`📋 Reservas existentes:`, reservations.rows.length);
             
-            // Filtrar horarios que no estén reservados
+            // Formatear horarios y filtrar los que no estén reservados
             const reservedTimes = reservations.rows.map(r => r.reservation_time.slice(0, 5));
             const availableSlots = availableHours.rows
-                .map(hour => hour.start_time)
-                .filter(time => !reservedTimes.includes(time));
+                .map(hour => hour.start_time.slice(0, 5)) // Formatear a HH:MM
+                .filter(time => !reservedTimes.includes(time))
+                .filter((time, index, array) => array.indexOf(time) === index); // Eliminar duplicados adicionales
             
             console.log(`✅ Horarios disponibles:`, availableSlots.length);
             
