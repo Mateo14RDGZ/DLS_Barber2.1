@@ -13,6 +13,10 @@
       "destination": "/api/admin?endpoint=all-reservations"
     },
     {
+      "source": "/api/reservations/(\\d+)/status",
+      "destination": "/api/admin?endpoint=update-reservation-status&id=$1"
+    },
+    {
       "source": "/api/reservations/available-hours/:date/:barberId",
       "destination": "/api/reservations/available-hours-query?date=$1&barberId=$2"
     },

@@ -20,11 +20,27 @@ module.exports = async function handler(req, res) {
 
     const { query } = req;
     const endpoint = query.endpoint;
+    const reservationId = query.id;
 
     try {
         const client = await pool.connect();
         
         try {
+            // Verificar autenticación para endpoints que la requieren
+            if (endpoint === 'all-reservations' || endpoint === 'update-reservation-status') {
+                const token = req.headers.authorization?.split(' ')[1];
+                if (!token) {
+                    return res.status(401).json({ error: 'Token no proporcionado' });
+                }
+
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                
+                // Verificar que el usuario sea admin
+                if (decoded.role !== 'admin') {
+                    return res.status(403).json({ error: 'Acceso denegado. Se requiere rol de administrador' });
+                }
+            }
+
             switch (endpoint) {
                 case 'barbers':
                     if (req.method !== 'GET') {
@@ -81,19 +97,6 @@ module.exports = async function handler(req, res) {
                         return res.status(405).json({ error: 'Method not allowed' });
                     }
                     
-                    // Verificar token de autenticación y rol de admin
-                    const token = req.headers.authorization?.split(' ')[1];
-                    if (!token) {
-                        return res.status(401).json({ error: 'Token no proporcionado' });
-                    }
-
-                    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-                    
-                    // Verificar que el usuario sea admin
-                    if (decoded.role !== 'admin') {
-                        return res.status(403).json({ error: 'Acceso denegado. Se requiere rol de administrador' });
-                    }
-                    
                     // Obtener todas las reservas
                     const reservations = await client.query(`
                         SELECT 
@@ -135,6 +138,64 @@ module.exports = async function handler(req, res) {
                     return res.json({ 
                         reservations: reservations.rows,
                         statistics: stats.rows[0]
+                    });
+
+                case 'update-reservation-status':
+                    if (req.method !== 'PUT') {
+                        return res.status(405).json({ error: 'Method not allowed' });
+                    }
+
+                    if (!reservationId) {
+                        return res.status(400).json({ error: 'ID de reserva requerido' });
+                    }
+
+                    const { status } = req.body;
+                    
+                    if (!status || !['confirmed', 'cancelled', 'pending'].includes(status)) {
+                        return res.status(400).json({ error: 'Estado válido requerido (confirmed, cancelled, pending)' });
+                    }
+
+                    // Actualizar el estado de la reserva
+                    const updateResult = await client.query(`
+                        UPDATE reservations 
+                        SET status = $1, updated_at = CURRENT_TIMESTAMP
+                        WHERE id = $2
+                        RETURNING *
+                    `, [status, reservationId]);
+
+                    if (updateResult.rows.length === 0) {
+                        return res.status(404).json({ error: 'Reserva no encontrada' });
+                    }
+
+                    // Obtener información completa de la reserva actualizada
+                    const updatedReservation = await client.query(`
+                        SELECT 
+                            r.id,
+                            r.reservation_date,
+                            r.reservation_time,
+                            r.client_name,
+                            r.client_phone,
+                            r.client_email,
+                            r.status,
+                            r.notes,
+                            r.created_at,
+                            r.updated_at,
+                            b.name as barber_name,
+                            s.name as service_name,
+                            s.duration_minutes,
+                            s.price,
+                            u.username as user_username,
+                            u.email as user_email
+                        FROM reservations r
+                        LEFT JOIN barbers b ON r.barber_id = b.id
+                        LEFT JOIN services s ON r.service_id = s.id
+                        LEFT JOIN users u ON r.user_id = u.id
+                        WHERE r.id = $1
+                    `, [reservationId]);
+
+                    return res.json({
+                        message: `Reserva ${status === 'confirmed' ? 'confirmada' : status === 'cancelled' ? 'cancelada' : 'actualizada'} exitosamente`,
+                        reservation: updatedReservation.rows[0]
                     });
 
                 default:
