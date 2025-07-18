@@ -4,6 +4,8 @@ const API_BASE_URL = window.location.hostname === 'localhost'
     : '/api';
 
 console.log('🔧 auth.js cargado');
+console.log('🌐 Hostname actual:', window.location.hostname);
+console.log('🔗 API_BASE_URL configurada:', API_BASE_URL);
 
 // Utilidades para el localStorage
 const storage = {
