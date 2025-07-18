@@ -29,14 +29,44 @@ module.exports = async function handler(req, res) {
             await client.query('DELETE FROM available_hours');
             console.log('🗑️ Horarios anteriores eliminados');
             
-            // Definir horarios por día (9:00 AM - 6:00 PM)
-            const timeSlots = [
-                '09:00:00', '10:00:00', '11:00:00', '12:00:00', 
-                '13:00:00', '14:00:00', '15:00:00', '16:00:00', 
-                '17:00:00', '18:00:00'
-            ];
+            // Generar horarios cada 45 minutos
+            function generateTimeSlots(startHour, startMinute, endHour, endMinute) {
+                const slots = [];
+                let currentHour = startHour;
+                let currentMinute = startMinute;
+                
+                while (currentHour < endHour || (currentHour === endHour && currentMinute < endMinute)) {
+                    const timeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}:00`;
+                    slots.push(timeString);
+                    
+                    // Agregar 45 minutos
+                    currentMinute += 45;
+                    if (currentMinute >= 60) {
+                        currentHour += Math.floor(currentMinute / 60);
+                        currentMinute = currentMinute % 60;
+                    }
+                }
+                
+                return slots;
+            }
             
-            const workDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            // Horarios de lunes a viernes: 10:00 AM - 6:00 PM
+            const weekdaySlots = generateTimeSlots(10, 0, 18, 0);
+            
+            // Horarios de sábado: 10:00 AM - 3:00 PM  
+            const saturdaySlots = generateTimeSlots(10, 0, 15, 0);
+            
+            console.log('📅 Horarios de lunes a viernes:', weekdaySlots);
+            console.log('📅 Horarios de sábado:', saturdaySlots);
+            
+            const workDays = {
+                'monday': weekdaySlots,
+                'tuesday': weekdaySlots, 
+                'wednesday': weekdaySlots,
+                'thursday': weekdaySlots,
+                'friday': weekdaySlots,
+                'saturday': saturdaySlots
+            };
             
             // Obtener todos los barberos
             const barbers = await client.query('SELECT id FROM barbers WHERE is_active = true');
@@ -44,16 +74,19 @@ module.exports = async function handler(req, res) {
             let insertedCount = 0;
             
             for (const barber of barbers.rows) {
-                for (const day of workDays) {
-                    // Sábado solo hasta las 3:00 PM
-                    const availableSlots = day === 'saturday' 
-                        ? timeSlots.filter(time => time <= '15:00:00')
-                        : timeSlots;
-                    
-                    for (const timeSlot of availableSlots) {
-                        // Calcular end_time (1 hora después)
-                        const startHour = parseInt(timeSlot.split(':')[0]);
-                        const endTime = `${(startHour + 1).toString().padStart(2, '0')}:00:00`;
+                for (const [day, timeSlots] of Object.entries(workDays)) {
+                    for (const timeSlot of timeSlots) {
+                        // Calcular end_time (45 minutos después)
+                        const [startHour, startMinute] = timeSlot.split(':').map(Number);
+                        let endHour = startHour;
+                        let endMinute = startMinute + 45;
+                        
+                        if (endMinute >= 60) {
+                            endHour += Math.floor(endMinute / 60);
+                            endMinute = endMinute % 60;
+                        }
+                        
+                        const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}:00`;
                         
                         await client.query(`
                             INSERT INTO available_hours (day_of_week, start_time, end_time, barber_id, is_active) 
@@ -71,11 +104,21 @@ module.exports = async function handler(req, res) {
             const totalHours = await client.query('SELECT COUNT(*) as total FROM available_hours');
             
             res.json({
-                message: 'Horarios agregados correctamente',
+                message: 'Horarios de 45 minutos agregados correctamente',
                 inserted_hours: insertedCount,
                 total_hours_in_db: parseInt(totalHours.rows[0].total),
-                available_time_slots: timeSlots,
-                work_days: workDays,
+                schedule: {
+                    'monday_to_friday': {
+                        hours: '10:00 AM - 6:00 PM',
+                        slots: weekdaySlots,
+                        duration: '45 minutes each'
+                    },
+                    'saturday': {
+                        hours: '10:00 AM - 3:00 PM', 
+                        slots: saturdaySlots,
+                        duration: '45 minutes each'
+                    }
+                },
                 barbers_count: barbers.rows.length
             });
             
