@@ -376,24 +376,51 @@ async function loadUserReservations() {
         
         if (!reservations || reservations.length === 0) {
             console.log('ℹ️ No hay reservas para mostrar');
-            reservationsList.innerHTML = '<div class="no-reservations">No tienes reservas aún</div>';
+            reservationsList.innerHTML = `
+                <div class="no-reservations">
+                    <h4>📋 No tienes reservas aún</h4>
+                    <p>¡Programa tu primera cita con nuestros barberos profesionales!</p>
+                </div>
+            `;
             return;
         }
         
         console.log('✅ Mostrando', reservations.length, 'reservas');
-        reservationsList.innerHTML = reservations.map(reservation => `
-            <div class="reservation-card">
-                <h4>${reservation.service_name}</h4>
-                <p><strong>📅 Fecha:</strong> ${reservation.reservation_date}</p>
-                <p><strong>⏰ Hora:</strong> ${reservation.reservation_time}</p>
-                <p><strong>✂️ Barbero:</strong> ${reservation.barber_name}</p>
-                <p><strong>👤 Cliente:</strong> ${reservation.client_name}</p>
-                <p><strong>📱 Teléfono:</strong> ${reservation.client_phone}</p>
-                ${reservation.notes ? `<p><strong>📝 Notas:</strong> ${reservation.notes}</p>` : ''}
-                <p><strong>Estado:</strong> <span class="status-badge status-${reservation.status}">${getStatusText(reservation.status)}</span></p>
-                <p><strong>Creada:</strong> ${new Date(reservation.created_at).toLocaleDateString()}</p>
-            </div>
-        `).join('');
+        reservationsList.innerHTML = reservations.map(reservation => {
+            const reservationDate = new Date(reservation.reservation_date);
+            const formattedDate = reservationDate.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            const createdDate = new Date(reservation.created_at);
+            const formattedCreatedDate = createdDate.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            
+            // Formatear hora (remover segundos si los tiene)
+            const formattedTime = reservation.reservation_time.slice(0, 5);
+            
+            return `
+                <div class="reservation-card">
+                    <h4>✂️ ${reservation.service_name}</h4>
+                    <p><strong>📅 Fecha:</strong> ${formattedDate}</p>
+                    <p><strong>⏰ Hora:</strong> ${formattedTime}</p>
+                    <p><strong>👨‍💼 Barbero:</strong> ${reservation.barber_name}</p>
+                    <p><strong>👤 Cliente:</strong> ${reservation.client_name}</p>
+                    <p><strong>📱 Teléfono:</strong> ${reservation.client_phone}</p>
+                    ${reservation.notes ? `<p><strong>📝 Notas:</strong> ${reservation.notes}</p>` : ''}
+                    <p><strong>💰 Precio:</strong> $${parseFloat(reservation.price).toLocaleString('es-ES')}</p>
+                    <p><strong>⏱️ Duración:</strong> ${reservation.duration_minutes} minutos</p>
+                    <p><strong>📊 Estado:</strong> <span class="status-badge status-${reservation.status}">${getStatusText(reservation.status)}</span></p>
+                    <p><strong>📋 Creada:</strong> ${formattedCreatedDate}</p>
+                </div>
+            `;
+        }).join('');
         
     } catch (error) {
         console.error('Error cargando reservas:', error);

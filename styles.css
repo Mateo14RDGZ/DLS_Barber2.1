@@ -1821,3 +1821,172 @@ button,
 .step:hover {
   box-shadow: 0 4px 20px rgba(20, 184, 166, 0.12);
 }
+
+/* Estilos para Mis Reservas */
+.reservations-section {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 15px;
+  padding: 30px;
+  margin-top: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.reservations-section h3 {
+  color: var(--color-accent-teal);
+  font-family: "Oswald", sans-serif;
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+#reservations-list {
+  display: grid;
+  gap: 20px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.reservation-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.reservation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-accent-teal), var(--color-accent-blue));
+  border-radius: 12px 12px 0 0;
+}
+
+.reservation-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(20, 184, 166, 0.15);
+  border-color: rgba(20, 184, 166, 0.4);
+}
+
+.reservation-card h4 {
+  color: var(--color-white);
+  font-family: "Oswald", sans-serif;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(20, 184, 166, 0.2);
+}
+
+.reservation-card p {
+  margin-bottom: 8px;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.reservation-card p strong {
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+/* Estados de Reserva */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 5px;
+  text-shadow: none;
+}
+
+.status-pending {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.status-confirmed {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.status-cancelled {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.status-completed {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Mensaje cuando no hay reservas */
+.no-reservations {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-light);
+  font-style: italic;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  border: 2px dashed rgba(20, 184, 166, 0.3);
+}
+
+/* Scrollbar personalizado para la lista de reservas */
+#reservations-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+#reservations-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+#reservations-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--color-accent-teal), var(--color-accent-blue));
+  border-radius: 10px;
+}
+
+#reservations-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-accent-teal));
+}
+
+/* Responsive para reservas */
+@media (max-width: 768px) {
+  .reservations-section {
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .reservation-card {
+    padding: 15px;
+  }
+  
+  .reservation-card h4 {
+    font-size: 1.1rem;
+  }
+  
+  .reservation-card p {
+    font-size: 0.85rem;
+  }
+  
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+}
