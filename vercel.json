@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/server.js",
+      "src": "api/**/*.js",
       "use": "@vercel/node"
     },
     {
@@ -17,7 +17,7 @@
       "src": "*.js",
       "use": "@vercel/static",
       "config": {
-        "excludeFiles": ["backend/**"]
+        "excludeFiles": ["api/**", "backend/**"]
       }
     },
     {
@@ -28,7 +28,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/server.js"
+      "dest": "/api/$1"
     },
     {
       "src": "/(.*)",
