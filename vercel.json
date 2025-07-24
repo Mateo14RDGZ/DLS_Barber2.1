@@ -33,6 +33,10 @@
       "destination": "/api/reservations?action=available-hours-query"
     },
     {
+      "source": "/api/reservations/(.*)",
+      "destination": "/api/reservations"
+    },
+    {
       "source": "/api/admin/barbers",
       "destination": "/api/admin?endpoint=barbers"
     },

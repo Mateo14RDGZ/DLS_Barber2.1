@@ -33,6 +33,15 @@ async function apiRequest(endpoint, options = {}) {
 
     try {
         const response = await fetch(url, config);
+        
+        // Verificar si la respuesta es JSON válida
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('❌ Respuesta no es JSON:', text);
+            throw new Error(`Respuesta inválida del servidor: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (!response.ok) {

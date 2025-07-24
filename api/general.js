@@ -12,17 +12,21 @@ module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Content-Type', 'application/json');
     
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
-    const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+    const { pathname, searchParams } = new URL(req.url, `http://${req.headers.host}`);
+    const action = searchParams.get('action');
+    
+    console.log('🔍 General API - pathname:', pathname, 'action:', action);
     
     // Determinar la acción basada en la URL
-    if (pathname.includes('/barbers')) {
+    if (action === 'barbers' || pathname.includes('/barbers')) {
         return await handleBarbers(req, res);
-    } else if (pathname.includes('/services')) {
+    } else if (action === 'services' || pathname.includes('/services')) {
         return await handleServices(req, res);
     } else {
         return res.status(404).json({ error: 'Endpoint not found' });

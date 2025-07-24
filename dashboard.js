@@ -98,7 +98,7 @@ async function loadAvailableHours(date) {
         console.log('👨‍💼 Usando barbero ID:', barberId);
         
         console.log('📡 Haciendo petición a API...');
-        const data = await apiRequest(`/reservations/available-hours/${date}/${barberId}`);
+        const data = await apiRequest(`/reservations/available-hours?date=${date}&barber_id=${barberId}`);
         console.log('✅ Respuesta de API:', data);
         
         const availableHours = data.available_hours;

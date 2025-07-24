@@ -13,21 +13,25 @@ module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Content-Type', 'application/json');
     
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
-    const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+    const { pathname, searchParams } = new URL(req.url, `http://${req.headers.host}`);
+    const action = searchParams.get('action');
     
-    // Determinar la acción basada en la URL y método
-    if (pathname.includes('/my-reservations')) {
+    console.log('🔍 Reservations API - pathname:', pathname, 'action:', action);
+    
+    // Determinar la acción basada en la URL y parámetros
+    if (action === 'my-reservations' || pathname.includes('/my-reservations')) {
         return await handleMyReservations(req, res);
-    } else if (pathname.includes('/all')) {
+    } else if (action === 'all' || pathname.includes('/all')) {
         return await handleAllReservations(req, res);
-    } else if (pathname.includes('/available-hours-query')) {
+    } else if (action === 'available-hours-query' || pathname.includes('/available-hours-query')) {
         return await handleAvailableHoursQuery(req, res);
-    } else if (pathname.includes('/available-hours')) {
+    } else if (action === 'available-hours' || pathname.includes('/available-hours')) {
         return await handleAvailableHours(req, res);
     } else if (req.method === 'POST') {
         return await handleCreateReservation(req, res);
