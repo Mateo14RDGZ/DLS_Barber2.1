@@ -1,24 +1,52 @@
 {
   "rewrites": [
     {
+      "source": "/api/auth/login",
+      "destination": "/api/auth?action=login"
+    },
+    {
+      "source": "/api/auth/register",
+      "destination": "/api/auth?action=register"
+    },
+    {
       "source": "/api/general/barbers",
-      "destination": "/api/admin?endpoint=barbers"
+      "destination": "/api/general?action=barbers"
     },
     {
       "source": "/api/general/services", 
-      "destination": "/api/admin?endpoint=services"
+      "destination": "/api/general?action=services"
+    },
+    {
+      "source": "/api/reservations/my-reservations",
+      "destination": "/api/reservations?action=my-reservations"
     },
     {
       "source": "/api/reservations/all",
+      "destination": "/api/reservations?action=all"
+    },
+    {
+      "source": "/api/reservations/available-hours",
+      "destination": "/api/reservations?action=available-hours"
+    },
+    {
+      "source": "/api/reservations/available-hours-query",
+      "destination": "/api/reservations?action=available-hours-query"
+    },
+    {
+      "source": "/api/admin/barbers",
+      "destination": "/api/admin?endpoint=barbers"
+    },
+    {
+      "source": "/api/admin/services", 
+      "destination": "/api/admin?endpoint=services"
+    },
+    {
+      "source": "/api/admin/all-reservations",
       "destination": "/api/admin?endpoint=all-reservations"
     },
     {
-      "source": "/api/reservations/(\\d+)/status",
-      "destination": "/api/admin?endpoint=update-reservation-status&id=$1"
-    },
-    {
-      "source": "/api/reservations/available-hours/:date/:barberId",
-      "destination": "/api/reservations/available-hours-query?date=$1&barberId=$2"
+      "source": "/api/admin/update-reservation-status",
+      "destination": "/api/admin?endpoint=update-reservation-status"
     },
     {
       "source": "/api/(.*)",

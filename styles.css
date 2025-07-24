@@ -2050,7 +2050,11 @@ button,
 .no-reservations {
   text-align: center;
   padding: 40px 20px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
   border: 2px dashed rgba(212, 175, 55, 0.3);
   border-radius: 15px;
   color: #666;
