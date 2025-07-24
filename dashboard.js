@@ -38,9 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Cargar historial de reservas
     loadUserReservations();
-    
-    // Inicializar modal de reservas
-    setTimeout(initReservationsModal, 100);
 });
 
 // Cargar datos iniciales (solo barberos)
@@ -388,8 +385,15 @@ async function loadUserReservations() {
             return;
         }
         
-        console.log('✅ Mostrando', reservations.length, 'reservas');
-        reservationsList.innerHTML = reservations.map(reservation => {
+        // Ordenar reservas por fecha (más recientes primero)
+        const sortedReservations = reservations.sort((a, b) => {
+            const dateA = new Date(`${a.reservation_date} ${a.reservation_time}`);
+            const dateB = new Date(`${b.reservation_date} ${b.reservation_time}`);
+            return dateB - dateA;
+        });
+        
+        console.log('✅ Mostrando', sortedReservations.length, 'reservas');
+        reservationsList.innerHTML = sortedReservations.map(reservation => {
             const reservationDate = new Date(reservation.reservation_date);
             const formattedDate = reservationDate.toLocaleDateString('es-ES', {
                 weekday: 'long',
@@ -398,29 +402,48 @@ async function loadUserReservations() {
                 day: 'numeric'
             });
             
-            const createdDate = new Date(reservation.created_at);
-            const formattedCreatedDate = createdDate.toLocaleDateString('es-ES', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            
             // Formatear hora (remover segundos si los tiene)
             const formattedTime = reservation.reservation_time.slice(0, 5);
             
+            // Determinar si es una reserva pasada, presente o futura
+            const now = new Date();
+            const reservationDateTime = new Date(`${reservation.reservation_date} ${reservation.reservation_time}`);
+            let timeIndicator = '';
+            
+            if (reservationDateTime < now) {
+                timeIndicator = '⏰ Reserva pasada';
+            } else if (reservationDateTime.toDateString() === now.toDateString()) {
+                timeIndicator = '🎯 Hoy';
+            } else {
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                if (reservationDateTime.toDateString() === tomorrow.toDateString()) {
+                    timeIndicator = '⏳ Mañana';
+                } else {
+                    const diffDays = Math.ceil((reservationDateTime - now) / (1000 * 60 * 60 * 24));
+                    timeIndicator = `⏳ En ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+                }
+            }
+            
             return `
                 <div class="reservation-card">
-                    <h4>✂️ ${reservation.service_name}</h4>
-                    <p><strong>📅 Fecha:</strong> ${formattedDate}</p>
-                    <p><strong>⏰ Hora:</strong> ${formattedTime}</p>
-                    <p><strong>👨‍💼 Barbero:</strong> ${reservation.barber_name}</p>
-                    <p><strong>👤 Cliente:</strong> ${reservation.client_name}</p>
-                    <p><strong>📱 Teléfono:</strong> ${reservation.client_phone}</p>
-                    ${reservation.notes ? `<p><strong>📝 Notas:</strong> ${reservation.notes}</p>` : ''}
-                    <p><strong>💰 Precio:</strong> $${parseFloat(reservation.price).toLocaleString('es-ES')}</p>
-                    <p><strong>⏱️ Duración:</strong> ${reservation.duration_minutes} minutos</p>
-                    <p><strong>📊 Estado:</strong> <span class="status-badge status-${reservation.status}">${getStatusText(reservation.status)}</span></p>
-                    <p><strong>📋 Creada:</strong> ${formattedCreatedDate}</p>
+                    <div class="reservation-status">
+                        <span class="status-badge status-${reservation.status}">${getStatusText(reservation.status)}</span>
+                    </div>
+                    <h4>💇‍♂️ ${reservation.service_name}</h4>
+                    <div class="reservation-details">
+                        <p><strong>👨‍💼 Barbero:</strong> ${reservation.barber_name}</p>
+                        <p><strong>� Fecha:</strong> ${formattedDate}</p>
+                        <p><strong>🕐 Hora:</strong> ${formattedTime}</p>
+                        <p><strong>� Teléfono:</strong> ${reservation.client_phone}</p>
+                        <p><strong>✉️ Email:</strong> ${reservation.client_email}</p>
+                        <p><strong>💰 Precio:</strong> $${parseFloat(reservation.price).toLocaleString('es-ES')}</p>
+                        <p><strong>⏱️ Duración:</strong> ${reservation.duration_minutes} minutos</p>
+                        ${reservation.notes ? `<p><strong>� Notas:</strong> ${reservation.notes}</p>` : ''}
+                    </div>
+                    <div class="reservation-footer">
+                        <small>Reserva #${reservation.id} • ${timeIndicator}</small>
+                    </div>
                 </div>
             `;
         }).join('');
@@ -462,126 +485,6 @@ function showMessage(message, type = 'error') {
 // Función para ir al panel de administrador
 function goToAdminPanel() {
     window.location.href = 'admin.html';
-}
-
-// Funciones del Modal de Reservas
-function initReservationsModal() {
-    const openModalBtn = document.getElementById('open-reservations-modal');
-    const closeModalBtn = document.getElementById('close-reservations-modal');
-    const modal = document.getElementById('reservations-modal');
-    
-    if (openModalBtn) {
-        openModalBtn.addEventListener('click', openReservationsModal);
-    }
-    
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', closeReservationsModal);
-    }
-    
-    // Cerrar modal al hacer clic fuera
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeReservationsModal();
-            }
-        });
-    }
-    
-    // Cerrar modal con tecla Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal.style.display === 'flex') {
-            closeReservationsModal();
-        }
-    });
-}
-
-async function openReservationsModal() {
-    const modal = document.getElementById('reservations-modal');
-    const modalReservationsList = document.getElementById('modal-reservations-list');
-    
-    modal.style.display = 'flex';
-    modalReservationsList.innerHTML = '<div class="no-reservations">Cargando todas las reservas...</div>';
-    
-    try {
-        const token = storage.get('token');
-        const response = await fetch('/api/reservations', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            displayModalReservations(data.reservations || []);
-        } else {
-            modalReservationsList.innerHTML = '<div class="no-reservations">❌ Error al cargar las reservas</div>';
-        }
-    } catch (error) {
-        console.error('Error al cargar reservas en modal:', error);
-        modalReservationsList.innerHTML = '<div class="no-reservations">❌ Error de conexión</div>';
-    }
-}
-
-function closeReservationsModal() {
-    const modal = document.getElementById('reservations-modal');
-    modal.style.display = 'none';
-}
-
-function displayModalReservations(reservations) {
-    const modalReservationsList = document.getElementById('modal-reservations-list');
-    
-    if (reservations.length === 0) {
-        modalReservationsList.innerHTML = '<div class="no-reservations">📋 No tienes reservas aún</div>';
-        return;
-    }
-    
-    // Ordenar reservas por fecha (más recientes primero)
-    const sortedReservations = reservations.sort((a, b) => {
-        const dateA = new Date(`${a.date} ${a.time}`);
-        const dateB = new Date(`${b.date} ${b.time}`);
-        return dateB - dateA;
-    });
-    
-    modalReservationsList.innerHTML = sortedReservations.map(reservation => `
-        <div class="reservation-card">
-            <div class="reservation-status">
-                <span class="status-badge status-${reservation.status}">${getStatusText(reservation.status)}</span>
-            </div>
-            <h4>💇‍♂️ ${reservation.service_name || 'Servicio de Barbería'}</h4>
-            <div class="reservation-details">
-                <p><strong>👨‍💼 Barbero:</strong> ${reservation.barber_name || 'No asignado'}</p>
-                <p><strong>📅 Fecha:</strong> ${formatReservationDate(reservation.date)}</p>
-                <p><strong>🕐 Hora:</strong> ${reservation.time}</p>
-                <p><strong>📞 Teléfono:</strong> ${reservation.client_phone}</p>
-                <p><strong>✉️ Email:</strong> ${reservation.client_email}</p>
-                ${reservation.notes ? `<p><strong>📝 Notas:</strong> ${reservation.notes}</p>` : ''}
-            </div>
-            <div class="reservation-footer">
-                <small>Reserva #${reservation.id} • ${getReservationTimeText(reservation.date, reservation.time)}</small>
-            </div>
-        </div>
-    `).join('');
-}
-
-function getReservationTimeText(date, time) {
-    const reservationDate = new Date(`${date} ${time}`);
-    const now = new Date();
-    
-    if (reservationDate < now) {
-        return '⏰ Reserva pasada';
-    } else if (reservationDate.toDateString() === now.toDateString()) {
-        return '🎯 Hoy';
-    } else {
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        if (reservationDate.toDateString() === tomorrow.toDateString()) {
-            return '⏳ Mañana';
-        }
-    }
-    
-    const diffDays = Math.ceil((reservationDate - now) / (1000 * 60 * 60 * 24));
-    return `⏳ En ${diffDays} día${diffDays > 1 ? 's' : ''}`;
 }
 
 console.log('🚀 Dashboard DLS BARBER - Cargado con autenticación!');
