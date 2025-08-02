@@ -95,17 +95,34 @@ const connectToSqlite = async () => {
 
 // Función principal para conectar a la base de datos
 const connectToDatabase = async () => {
-  // Determinar qué base de datos usar si aún no se ha decidido
-  if (!dbType) {
-    dbType = determineDbType();
-    console.log(`🔍 Usando ${dbType === 'postgres' ? 'PostgreSQL' : 'SQLite'}`);
-  }
-  
-  // Conectar a la base de datos apropiada
-  if (dbType === 'postgres') {
-    return connectToPostgres();
-  } else {
-    return connectToSqlite();
+  try {
+    // Determinar qué base de datos usar si aún no se ha decidido
+    if (!dbType) {
+      dbType = determineDbType();
+      console.log(`🔍 Usando ${dbType === 'postgres' ? 'PostgreSQL' : 'SQLite'} para la conexión`);
+      console.log(`🌐 Entorno: ${process.env.NODE_ENV || 'development'}`);
+      
+      if (dbType === 'postgres') {
+        console.log(`🔌 Verificando URL de conexión: ${process.env.DATABASE_URL ? 'Configurada' : 'No configurada'}`);
+      }
+    }
+    
+    // Conectar a la base de datos apropiada
+    if (dbType === 'postgres') {
+      return connectToPostgres();
+    } else {
+      return connectToSqlite();
+    }
+  } catch (error) {
+    console.error('❌ Error crítico al conectar a la base de datos:', error);
+    // Retornar un objeto que no fallará pero registrará el error
+    return {
+      query: async () => {
+        console.error('❌ Intento de consulta a base de datos fallida - conexión no establecida');
+        throw new Error('No se pudo establecer conexión con la base de datos');
+      },
+      close: () => {}
+    };
   }
 };
 
