@@ -128,8 +128,15 @@ function renderReservationsTable() {
     document.getElementById('reservations-table').style.display = 'table';
     document.getElementById('no-reservations').style.display = 'none';
     
-    tbody.innerHTML = filteredReservations.map(reservation => `
-        <tr>
+    // Limpiar el contenido actual
+    tbody.innerHTML = '';
+    
+    // Crear filas de forma dinámica
+    filteredReservations.forEach(reservation => {
+        const row = document.createElement('tr');
+        
+        // Crear celdas con datos básicos
+        row.innerHTML = `
             <td>${reservation.id}</td>
             <td>${reservation.reservation_date}</td>
             <td>${reservation.reservation_time}</td>
@@ -143,32 +150,57 @@ function renderReservationsTable() {
                 </span>
             </td>
             <td>
-                <div class="action-buttons">
-                    ${reservation.status === 'pending' ? `
-                        <button class="btn-small btn-confirm" onclick="updateReservationStatus(${reservation.id}, 'confirmed')">
-                            ✅ Confirmar
-                        </button>
-                        <button class="btn-small btn-cancel" onclick="updateReservationStatus(${reservation.id}, 'cancelled')">
-                            ❌ Cancelar
-                        </button>
-                    ` : ''}
-                    ${reservation.status === 'confirmed' ? `
-                        <button class="btn-small btn-cancel" onclick="updateReservationStatus(${reservation.id}, 'cancelled')">
-                            ❌ Cancelar
-                        </button>
-                    ` : ''}
-                    ${reservation.status === 'cancelled' ? `
-                        <button class="btn-small btn-confirm" onclick="updateReservationStatus(${reservation.id}, 'confirmed')">
-                            ✅ Reactivar
-                        </button>
-                    ` : ''}
-                    <button class="btn-small btn-details" onclick="showReservationDetails(${reservation.id})">
-                        📋 Detalles
-                    </button>
+                <div class="action-buttons" data-reservation-id="${reservation.id}">
                 </div>
             </td>
-        </tr>
-    `).join('');
+        `;
+        
+        // Agregar los botones con addEventListener en lugar de onclick inline
+        const actionButtonsContainer = row.querySelector('.action-buttons');
+        
+        // Botones basados en el estado
+        if (reservation.status === 'pending') {
+            // Botón Confirmar
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'btn-small btn-confirm';
+            confirmBtn.textContent = '✅ Confirmar';
+            confirmBtn.addEventListener('click', () => updateReservationStatus(reservation.id, 'confirmed'));
+            actionButtonsContainer.appendChild(confirmBtn);
+            
+            // Botón Cancelar
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn-small btn-cancel';
+            cancelBtn.textContent = '❌ Cancelar';
+            cancelBtn.addEventListener('click', () => updateReservationStatus(reservation.id, 'cancelled'));
+            actionButtonsContainer.appendChild(cancelBtn);
+        } 
+        else if (reservation.status === 'confirmed') {
+            // Botón Cancelar para reservas confirmadas
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn-small btn-cancel';
+            cancelBtn.textContent = '❌ Cancelar';
+            cancelBtn.addEventListener('click', () => updateReservationStatus(reservation.id, 'cancelled'));
+            actionButtonsContainer.appendChild(cancelBtn);
+        } 
+        else if (reservation.status === 'cancelled') {
+            // Botón Reactivar para reservas canceladas
+            const reactivateBtn = document.createElement('button');
+            reactivateBtn.className = 'btn-small btn-confirm';
+            reactivateBtn.textContent = '✅ Reactivar';
+            reactivateBtn.addEventListener('click', () => updateReservationStatus(reservation.id, 'confirmed'));
+            actionButtonsContainer.appendChild(reactivateBtn);
+        }
+        
+        // Botón Detalles (para todos los estados)
+        const detailsBtn = document.createElement('button');
+        detailsBtn.className = 'btn-small btn-details';
+        detailsBtn.textContent = '📋 Detalles';
+        detailsBtn.addEventListener('click', () => showReservationDetails(reservation.id));
+        actionButtonsContainer.appendChild(detailsBtn);
+        
+        // Agregar la fila a la tabla
+        tbody.appendChild(row);
+    });
 }
 
 // Aplicar filtros
@@ -222,6 +254,17 @@ async function updateReservationStatus(reservationId, newStatus) {
     try {
         console.log(`🔄 Actualizando reserva ${reservationId} a estado: ${newStatus}`);
         
+        // Deshabilitar todos los botones de acción temporalmente para evitar clics múltiples
+        const actionButtons = document.querySelectorAll('.action-buttons button');
+        actionButtons.forEach(button => {
+            button.disabled = true;
+            button.style.opacity = '0.5';
+            button.style.cursor = 'not-allowed';
+        });
+        
+        // Mostrar mensaje de carga
+        showMessage(`Actualizando estado...`, 'info');
+        
         const result = await apiRequest(`/reservations/${reservationId}/status`, {
             method: 'PUT',
             body: JSON.stringify({ status: newStatus })
@@ -235,7 +278,15 @@ async function updateReservationStatus(reservationId, newStatus) {
         
     } catch (error) {
         console.error('❌ Error actualizando estado:', error);
-        showMessage('Error actualizando el estado de la reserva', 'error');
+        showMessage(`Error: ${error.message || 'No se pudo actualizar el estado de la reserva'}`, 'error');
+        
+        // Re-habilitar los botones
+        const actionButtons = document.querySelectorAll('.action-buttons button');
+        actionButtons.forEach(button => {
+            button.disabled = false;
+            button.style.opacity = '1';
+            button.style.cursor = 'pointer';
+        });
     }
 }
 
@@ -323,22 +374,83 @@ function showMessage(message, type = 'error') {
         document.body.appendChild(messageContainer);
     }
     
-    const messageClass = type === 'success' ? 'success-message' : 'error-message';
-    messageContainer.innerHTML = `
-        <div class="message ${messageClass}" style="
-            padding: 15px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            background: ${type === 'success' ? '#10b981' : '#ef4444'};
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        ">
-            ${message}
-        </div>
-    `;
+    // Determinar color y clase según el tipo
+    let backgroundColor, className;
+    switch (type) {
+        case 'success':
+            backgroundColor = '#10b981';
+            className = 'success-message';
+            break;
+        case 'info':
+            backgroundColor = '#3b82f6';
+            className = 'info-message';
+            break;
+        case 'warning':
+            backgroundColor = '#f59e0b';
+            className = 'warning-message';
+            break;
+        default: // error
+            backgroundColor = '#ef4444';
+            className = 'error-message';
+    }
     
-    // Ocultar mensaje después de 3 segundos
+    // Crear y mostrar el mensaje
+    const messageElement = document.createElement('div');
+    messageElement.className = `message ${className}`;
+    messageElement.style.cssText = `
+        padding: 15px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        background: ${backgroundColor};
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+        max-width: 90vw;
+        word-break: break-word;
+        animation: fadeIn 0.3s;
+    `;
+    messageElement.innerHTML = message;
+    
+    // Añadir botón para cerrar
+    const closeButton = document.createElement('span');
+    closeButton.innerHTML = '&times;';
+    closeButton.style.cssText = `
+        float: right;
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 20px;
+    `;
+    closeButton.addEventListener('click', () => {
+        messageElement.style.animation = 'fadeOut 0.3s';
+        setTimeout(() => messageElement.remove(), 290);
+    });
+    messageElement.prepend(closeButton);
+    
+    // Agregar al contenedor
+    messageContainer.appendChild(messageElement);
+    
+    // Crear estilos para las animaciones si no existen
+    if (!document.getElementById('message-animations')) {
+        const style = document.createElement('style');
+        style.id = 'message-animations';
+        style.innerHTML = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateY(0); }
+                to { opacity: 0; transform: translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Ocultar mensaje después de 5 segundos
     setTimeout(() => {
-        messageContainer.innerHTML = '';
-    }, 3000);
+        if (messageElement.parentNode) {
+            messageElement.style.animation = 'fadeOut 0.3s';
+            setTimeout(() => messageElement.remove(), 290);
+        }
+    }, 5000);
 }

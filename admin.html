@@ -47,6 +47,69 @@
         font-weight: bold;
         color: #14b8a6;
       }
+      
+      /* Estilos mejorados para los botones de acción */
+      .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
+      }
+      
+      .btn-small {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: none;
+        font-size: 0.85rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      
+      .btn-small:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      
+      .btn-small:active {
+        transform: translateY(0);
+      }
+      
+      .btn-confirm {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+      }
+      
+      .btn-cancel {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+      }
+      
+      .btn-details {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+      }
+      
+      /* Estilo para botones deshabilitados */
+      .btn-small:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      
+      /* Animación para los mensajes */
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+      
+      @keyframes fadeOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-20px); }
+      }
 
       .stat-label {
         color: #9ca3af;
