@@ -31,15 +31,28 @@ module.exports = async (req, res) => {
       return res.status(403).json({ error: 'Acceso denegado - Se requiere rol de administrador' });
     }
     
+    // Obtener el ID de la reserva y el nuevo estado
     const { id } = req.query;
     const { status } = req.body;
     
+    console.log(`🔍 Solicitud de actualización recibida: ID=${id}, Estado=${status}`);
+    
     // Validar estado
     const validStatuses = ['pending', 'confirmed', 'completed', 'cancelled'];
-    if (!id || !status || !validStatuses.includes(status)) {
+    
+    if (!id) {
+      console.error('❌ Error: ID de reserva no proporcionado');
       return res.status(400).json({ 
-        error: 'Datos inválidos', 
-        details: 'Se requiere un ID de reserva válido y un estado válido (pending, confirmed, completed, cancelled)'
+        error: 'ID de reserva no proporcionado', 
+        details: 'Se requiere el parámetro id en la URL'
+      });
+    }
+    
+    if (!status || !validStatuses.includes(status)) {
+      console.error(`❌ Error: Estado inválido: ${status}`);
+      return res.status(400).json({ 
+        error: 'Estado inválido', 
+        details: `El estado debe ser uno de: ${validStatuses.join(', ')}`
       });
     }
     
@@ -47,22 +60,38 @@ module.exports = async (req, res) => {
     const db = await connectToDatabase();
     
     // Actualizar estado de la reserva
-    const updateResult = await db.query(
-      'UPDATE reservations SET status = $1 WHERE id = $2 RETURNING id, status',
-      [status, id]
-    );
-    
-    if (!updateResult.rowCount) {
-      return res.status(404).json({ error: 'Reserva no encontrada' });
+    try {
+      const updateResult = await db.query(
+        'UPDATE reservations SET status = $1 WHERE id = $2 RETURNING id, status',
+        [status, id]
+      );
+      
+      console.log(`📊 Resultado de actualización:`, updateResult);
+      
+      if (!updateResult.rowCount) {
+        console.error(`❌ Error: Reserva con ID ${id} no encontrada`);
+        return res.status(404).json({ error: 'Reserva no encontrada' });
+      }
+      
+      console.log(`✅ Reserva actualizada exitosamente: ID=${id}, Nuevo estado=${status}`);
+      return res.status(200).json({ 
+        message: 'Estado de reserva actualizado exitosamente',
+        reservation: updateResult.rows[0]
+      });
+    } catch (dbError) {
+      console.error('❌ Error en la consulta a la base de datos:', dbError);
+      return res.status(500).json({ 
+        error: 'Error en la base de datos',
+        details: dbError.message
+      });
     }
     
-    return res.status(200).json({ 
-      message: 'Estado de reserva actualizado exitosamente',
-      reservation: updateResult.rows[0]
-    });
-    
   } catch (error) {
-    console.error('Error actualizando estado de reserva:', error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
+    console.error('❌ Error general actualizando estado de reserva:', error);
+    return res.status(500).json({ 
+      error: 'Error interno del servidor',
+      message: error.message,
+      stack: process.env.NODE_ENV !== 'production' ? error.stack : undefined
+    });
   }
 };
