@@ -266,9 +266,12 @@ async function updateReservationStatus(reservationId, newStatus) {
         showMessage(`Actualizando estado...`, 'info');
         
         // Detectar si estamos en entorno de producción (Vercel) o desarrollo
-        const endpoint = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const endpoint = isLocalhost
             ? `/reservations/${reservationId}/status` // Endpoint de desarrollo
-            : `/admin/update-reservation-status?id=${reservationId}`; // Endpoint de Vercel
+            : `/api/admin/update-reservation-status?id=${reservationId}`; // Endpoint de Vercel
+        
+        console.log(`🔗 Usando endpoint: ${endpoint} en ${isLocalhost ? 'desarrollo' : 'producción'}`);
         
         const result = await apiRequest(endpoint, {
             method: 'PUT',

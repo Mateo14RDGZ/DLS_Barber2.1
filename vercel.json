@@ -37,6 +37,10 @@
       "destination": "/api/reservations"
     },
     {
+      "source": "/api/admin/update-reservation-status",
+      "destination": "/api/admin/update-reservation-status"
+    },
+    {
       "source": "/api/admin/barbers",
       "destination": "/api/admin?endpoint=barbers"
     },
