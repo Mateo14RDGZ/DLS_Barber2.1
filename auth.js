@@ -21,7 +21,20 @@ const storage = {
 // Función para hacer peticiones a la API
 async function apiRequest(endpoint, options = {}) {
     const token = storage.get('token');
-    const url = `${API_BASE_URL}${endpoint}`;
+    
+    // Determinar URL base y construir URL completa
+    let url;
+    if (endpoint.startsWith('/api')) {
+        // Si ya tiene el prefijo /api, no lo añadimos de nuevo
+        url = endpoint;
+        console.log('⚠️ Endpoint ya tiene prefijo /api, usando directamente:', url);
+    } else {
+        // Añadir el prefijo API_BASE_URL
+        url = `${API_BASE_URL}${endpoint}`;
+        console.log('✅ Construyendo URL con prefijo API_BASE_URL:', url);
+    }
+    
+    console.log(`🔄 Haciendo petición a: ${url}`);
     
     const config = {
         headers: {
@@ -39,6 +52,13 @@ async function apiRequest(endpoint, options = {}) {
         if (!contentType || !contentType.includes('application/json')) {
             const text = await response.text();
             console.error('❌ Respuesta no es JSON:', text);
+            console.error('⚠️ Detalles de la petición:', {
+                url: url,
+                método: options.method || 'GET',
+                estado: response.status,
+                contentType: contentType,
+                headers: Object.fromEntries(response.headers.entries())
+            });
             throw new Error(`Respuesta inválida del servidor: ${response.status}`);
         }
         

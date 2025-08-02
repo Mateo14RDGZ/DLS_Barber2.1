@@ -53,10 +53,6 @@
       "destination": "/api/admin?endpoint=all-reservations"
     },
     {
-      "source": "/api/admin/update-reservation-status",
-      "destination": "/api/admin?endpoint=update-reservation-status"
-    },
-    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }

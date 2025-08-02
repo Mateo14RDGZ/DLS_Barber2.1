@@ -267,9 +267,12 @@ async function updateReservationStatus(reservationId, newStatus) {
         
         // Detectar si estamos en entorno de producción (Vercel) o desarrollo
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        // Importante: En producción usamos la ruta directa a la API serverless, sin "/api" inicial
+        // porque auth.js lo agregará cuando construya la URL completa
         const endpoint = isLocalhost
             ? `/reservations/${reservationId}/status` // Endpoint de desarrollo
-            : `/api/admin/update-reservation-status?id=${reservationId}`; // Endpoint de Vercel
+            : `/admin/update-reservation-status?id=${reservationId}`; // Endpoint para producción sin /api
         
         console.log(`🔗 Usando endpoint: ${endpoint} en ${isLocalhost ? 'desarrollo' : 'producción'}`);
         

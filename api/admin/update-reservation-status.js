@@ -7,6 +7,10 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
+  console.log(`🔍 [update-reservation-status] Recibida solicitud: ${req.method}`);
+  console.log(`📝 [update-reservation-status] Query params:`, req.query);
+  console.log(`📦 [update-reservation-status] Ruta completa:`, req.url);
+  
   // Manejar preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
