@@ -1,5 +1,12 @@
-const { connectToDatabase } = require('../_utils/database');
-const { verifyToken } = require('../_utils/auth');
+// Importaciones con manejo de errores
+let connectToDatabase, verifyToken;
+
+try {
+  ({ connectToDatabase } = require('../_utils/database'));
+  ({ verifyToken } = require('../_utils/auth'));
+} catch (requireError) {
+  console.error('❌ Error al cargar dependencias:', requireError);
+}
 
 module.exports = async (req, res) => {
   // Configuración CORS
@@ -10,6 +17,8 @@ module.exports = async (req, res) => {
   console.log(`🔍 [update-reservation-status] Recibida solicitud: ${req.method}`);
   console.log(`📝 [update-reservation-status] Query params:`, req.query);
   console.log(`📦 [update-reservation-status] Ruta completa:`, req.url);
+  console.log(`🌐 [update-reservation-status] Entorno:`, process.env.NODE_ENV || 'development');
+  console.log(`🔧 [update-reservation-status] Plataforma:`, process.env.VERCEL ? 'Vercel' : 'Local');
   
   // Manejar preflight OPTIONS request
   if (req.method === 'OPTIONS') {
@@ -20,7 +29,16 @@ module.exports = async (req, res) => {
   if (req.method !== 'PUT') {
     return res.status(405).json({ error: 'Método no permitido' });
   }
-  
+
+  // Verificar que las dependencias se cargaron correctamente
+  if (!connectToDatabase || !verifyToken) {
+    console.error('❌ Error: Dependencias no cargadas correctamente');
+    return res.status(500).json({ 
+      error: 'Error de configuración del servidor',
+      details: 'No se pudieron cargar las dependencias necesarias'
+    });
+  }
+
   try {
     // Verificar token y rol de administrador
     const authHeader = req.headers.authorization;

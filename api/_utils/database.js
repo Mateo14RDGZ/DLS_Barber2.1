@@ -10,36 +10,58 @@ let dbType;
 
 // Función para determinar qué base de datos usar
 const determineDbType = () => {
-  // En producción (Vercel) usaremos PostgreSQL
-  if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
+  // En Vercel (producción) siempre usar PostgreSQL
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    if (!process.env.DATABASE_URL) {
+      console.error('⚠️ ADVERTENCIA: DATABASE_URL no configurada en producción');
+    }
     return 'postgres';
   }
   // En desarrollo, usaremos SQLite
   return 'sqlite';
 };
 
-// Conectar a PostgreSQL
+// Conectar a PostgreSQL (optimizado para Neon)
 const connectToPostgres = async () => {
   if (!pgPool) {
+    // Configuración específica para Neon
     pgPool = new Pool({
       connectionString: process.env.DATABASE_URL,
       ssl: {
-        rejectUnauthorized: false // Necesario para Heroku/Vercel
-      }
+        rejectUnauthorized: false // Necesario para Neon/Vercel
+      },
+      // Configuraciones optimizadas para Neon serverless
+      max: 1, // Máximo 1 conexión para serverless
+      idleTimeoutMillis: 10000,
+      connectionTimeoutMillis: 10000,
+      allowExitOnIdle: true
     });
+    
+    console.log('🔌 Configurando pool de conexiones para Neon PostgreSQL');
   }
   
   // Probar la conexión
   try {
     const client = await pgPool.connect();
+    console.log('✅ Cliente PostgreSQL conectado exitosamente');
     client.release();
-    console.log('✅ Conexión a PostgreSQL exitosa');
+    console.log('✅ Conexión a Neon PostgreSQL establecida');
+    
     return {
-      query: (text, params) => pgPool.query(text, params),
+      query: async (text, params) => {
+        console.log('🔍 Ejecutando query:', text.substring(0, 50) + '...');
+        const result = await pgPool.query(text, params);
+        console.log('✅ Query ejecutada, filas afectadas:', result.rowCount);
+        return result;
+      },
       close: () => pgPool.end()
     };
   } catch (error) {
-    console.error('❌ Error conectando a PostgreSQL:', error);
+    console.error('❌ Error conectando a Neon PostgreSQL:', {
+      message: error.message,
+      code: error.code,
+      detail: error.detail
+    });
     throw error;
   }
 };
@@ -99,27 +121,41 @@ const connectToDatabase = async () => {
     // Determinar qué base de datos usar si aún no se ha decidido
     if (!dbType) {
       dbType = determineDbType();
-      console.log(`🔍 Usando ${dbType === 'postgres' ? 'PostgreSQL' : 'SQLite'} para la conexión`);
+      console.log(`🔍 Usando ${dbType === 'postgres' ? 'PostgreSQL (Neon)' : 'SQLite'} para la conexión`);
       console.log(`🌐 Entorno: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🚀 Plataforma: ${process.env.VERCEL ? 'Vercel' : 'Local'}`);
       
       if (dbType === 'postgres') {
-        console.log(`🔌 Verificando URL de conexión: ${process.env.DATABASE_URL ? 'Configurada' : 'No configurada'}`);
+        const hasDbUrl = !!process.env.DATABASE_URL;
+        console.log(`🔌 URL de conexión Neon: ${hasDbUrl ? 'Configurada ✅' : 'No configurada ❌'}`);
+        
+        if (hasDbUrl) {
+          // Mostrar info básica de la URL sin revelar credenciales
+          const url = new URL(process.env.DATABASE_URL);
+          console.log(`📡 Host: ${url.hostname}`);
+          console.log(`🔐 SSL: ${url.searchParams.get('sslmode') || 'habilitado'}`);
+        }
       }
     }
     
     // Conectar a la base de datos apropiada
     if (dbType === 'postgres') {
-      return connectToPostgres();
+      return await connectToPostgres();
     } else {
-      return connectToSqlite();
+      return await connectToSqlite();
     }
   } catch (error) {
-    console.error('❌ Error crítico al conectar a la base de datos:', error);
+    console.error('❌ Error crítico al conectar a la base de datos:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    
     // Retornar un objeto que no fallará pero registrará el error
     return {
       query: async () => {
         console.error('❌ Intento de consulta a base de datos fallida - conexión no establecida');
-        throw new Error('No se pudo establecer conexión con la base de datos');
+        throw new Error(`No se pudo establecer conexión con la base de datos: ${error.message}`);
       },
       close: () => {}
     };

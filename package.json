@@ -2,13 +2,21 @@
   "name": "dls-barber-system",
   "version": "1.0.0",
   "description": "Sistema completo de reservas para barbería DLS Barber",
-  "main": "backend/server.js",
+  "main": "index.html",
   "scripts": {
     "start": "cd backend && npm start",
     "dev": "cd backend && npm run dev",
     "install-backend": "cd backend && npm install",
     "migrate": "cd backend && node migrate.js",
-    "vercel-build": "cd backend && npm install"
+    "vercel-build": "npm install"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3",
+    "sqlite3": "^5.1.6",
+    "sqlite": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5"
   },
   "keywords": [
     "barberia",
@@ -25,6 +33,6 @@
     "url": "https://github.com/tu-usuario/dls-barber.git"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   }
 }
