@@ -363,7 +363,7 @@ function resetForm() {
     document.getElementById('client_email').value = currentUser.email || '';
 }
 
-// Cargar reservas del usuario
+// Cargar reservas del usuario - Actualizado para compatibilidad con Vercel
 async function loadUserReservations() {
     try {
         console.log('🔄 Cargando reservas del usuario...');

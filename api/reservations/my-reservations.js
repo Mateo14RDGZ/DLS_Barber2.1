@@ -1,26 +1,28 @@
+// Endpoint de compatibilidad - mismo código que /api/my-reservations.js
 const { connectToDatabase } = require('../_utils/database');
 const { verifyToken } = require('../_utils/auth');
 
 module.exports = async (req, res) => {
   // Configuración CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Content-Type', 'application/json');
   
-  console.log('🔍 [my-reservations] Iniciando función para obtener reservas del usuario');
-  console.log('📋 [my-reservations] Método:', req.method);
-  console.log('🔑 [my-reservations] Headers de autorización:', req.headers.authorization ? 'Presente' : 'Ausente');
+  console.log('🔍 [my-reservations-legacy] Endpoint de compatibilidad activado');
+  console.log('📋 [my-reservations-legacy] Método:', req.method);
+  console.log('� [my-reservations-legacy] URL:', req.url);
+  console.log('�🔑 [my-reservations-legacy] Headers de autorización:', req.headers.authorization ? 'Presente' : 'Ausente');
   
   // Manejar preflight OPTIONS request
   if (req.method === 'OPTIONS') {
-    console.log('✅ [my-reservations] Respondiendo a preflight OPTIONS');
+    console.log('✅ [my-reservations-legacy] Respondiendo a preflight OPTIONS');
     return res.status(200).end();
   }
   
-  // Solo permitir GET
+  // Solo permitir GET para este endpoint
   if (req.method !== 'GET') {
-    console.log('❌ [my-reservations] Método no permitido:', req.method);
+    console.log('❌ [my-reservations-legacy] Método no permitido:', req.method);
     return res.status(405).json({ 
       success: false,
       error: 'Método no permitido',
@@ -32,7 +34,7 @@ module.exports = async (req, res) => {
     // Verificar token
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      console.log('❌ [my-reservations] Token no proporcionado');
+      console.log('❌ [my-reservations-legacy] Token no proporcionado');
       return res.status(401).json({ 
         success: false,
         error: 'No autorizado',
@@ -41,11 +43,11 @@ module.exports = async (req, res) => {
     }
     
     const token = authHeader.replace('Bearer ', '');
-    console.log('🔐 [my-reservations] Verificando token...');
+    console.log('🔐 [my-reservations-legacy] Verificando token...');
     
     const decoded = verifyToken(token);
     if (!decoded || !decoded.id) {
-      console.log('❌ [my-reservations] Token inválido');
+      console.log('❌ [my-reservations-legacy] Token inválido');
       return res.status(401).json({ 
         success: false,
         error: 'Token inválido',
@@ -54,14 +56,14 @@ module.exports = async (req, res) => {
     }
     
     const userId = decoded.id;
-    console.log('👤 [my-reservations] Usuario autenticado:', userId);
+    console.log('👤 [my-reservations-legacy] Usuario autenticado:', userId);
     
     // Conectar a base de datos
-    console.log('🔌 [my-reservations] Conectando a base de datos...');
+    console.log('🔌 [my-reservations-legacy] Conectando a base de datos...');
     const db = await connectToDatabase();
     
     if (!db) {
-      console.error('❌ [my-reservations] No se pudo conectar a la base de datos');
+      console.error('❌ [my-reservations-legacy] No se pudo conectar a la base de datos');
       return res.status(500).json({ 
         success: false,
         error: 'Error de conexión',
@@ -69,10 +71,10 @@ module.exports = async (req, res) => {
       });
     }
     
-    console.log('✅ [my-reservations] Conexión a base de datos establecida');
+    console.log('✅ [my-reservations-legacy] Conexión a base de datos establecida');
     
     // Obtener reservas del usuario
-    console.log('📊 [my-reservations] Ejecutando consulta de reservas para usuario:', userId);
+    console.log('📊 [my-reservations-legacy] Ejecutando consulta de reservas para usuario:', userId);
     
     const query = `
       SELECT 
@@ -96,12 +98,12 @@ module.exports = async (req, res) => {
       ORDER BY r.reservation_date DESC, r.reservation_time DESC
     `;
     
-    console.log('📝 [my-reservations] Query SQL:', query);
-    console.log('📋 [my-reservations] Parámetros:', [userId]);
+    console.log('📝 [my-reservations-legacy] Query SQL:', query);
+    console.log('📋 [my-reservations-legacy] Parámetros:', [userId]);
     
     const result = await db.query(query, [userId]);
     
-    console.log('📊 [my-reservations] Resultado de la consulta:');
+    console.log('📊 [my-reservations-legacy] Resultado de la consulta:');
     console.log('- Filas encontradas:', result.rows?.length || 0);
     console.log('- RowCount:', result.rowCount);
     
@@ -128,18 +130,19 @@ module.exports = async (req, res) => {
       }
     }));
     
-    console.log('✅ [my-reservations] Reservas obtenidas exitosamente');
-    console.log('📋 [my-reservations] Datos formateados:', formattedReservations.length, 'reservas');
+    console.log('✅ [my-reservations-legacy] Reservas obtenidas exitosamente');
+    console.log('📋 [my-reservations-legacy] Datos formateados:', formattedReservations.length, 'reservas');
     
+    // Mantener la estructura de respuesta que espera el frontend
     return res.status(200).json({
       success: true,
       message: 'Reservas obtenidas exitosamente',
-      data: formattedReservations,
+      reservations: formattedReservations,
       count: formattedReservations.length
     });
     
   } catch (error) {
-    console.error('❌ [my-reservations] Error:', {
+    console.error('❌ [my-reservations-legacy] Error:', {
       message: error.message,
       stack: error.stack,
       code: error.code,
