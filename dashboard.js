@@ -328,7 +328,7 @@ ${notes ? `📝 Notas: ${notes}` : ''}
         console.log('📱 Mensaje de WhatsApp creado:', mensaje);
         
         // Abrir WhatsApp
-        const whatsappUrl = `https://wa.me/598092870198?text=${encodeURIComponent(mensaje)}`;
+        const whatsappUrl = `https://wa.me/59898863041?text=${encodeURIComponent(mensaje)}`;
         window.open(whatsappUrl, '_blank');
         
         // Limpiar formulario DESPUÉS de crear el mensaje

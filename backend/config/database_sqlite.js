@@ -77,7 +77,7 @@ const initDatabase = () => {
 
             // Insertar datos iniciales
             db.run(`INSERT OR IGNORE INTO barbers (id, name, email, phone, specialty) 
-                   VALUES (1, 'Samuel', 'samuel@dlsbarber.com', '092870198', 'Barbero Profesional')`);
+                   VALUES (1, 'Samuel', 'samuel@dlsbarber.com', '098863041', 'Barbero Profesional')`);
 
             db.run(`INSERT OR IGNORE INTO services (id, name, description, duration_minutes, price) VALUES 
                    (1, 'Corte de cabello', 'Corte profesional personalizado', 30, 800.00),

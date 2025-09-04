@@ -8,7 +8,7 @@ AOS.init({
 });
 
 // Configuración
-const numeroWhatsApp = "598092870198";
+const numeroWhatsApp = "59898863041";
 let selectedDate = null;
 let selectedHour = null;
 

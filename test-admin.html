@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Admin API</title>
+  </head>
+  <body>
+    <h1>Test Admin Panel API</h1>
+    <button onclick="testUpdateStatus()">Test Update Status API</button>
+    <div id="result"></div>
+
+    <script>
+      async function testUpdateStatus() {
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "Testing...";
+
+        try {
+          // Simular token (necesitarás usar un token real)
+          const token = localStorage.getItem("token");
+
+          if (!token) {
+            resultDiv.innerHTML =
+              '<p style="color: red;">Error: No token found. Please login first.</p>';
+            return;
+          }
+
+          const response = await fetch(
+            "https://dls-barber.vercel.app/api/admin/update-reservation-status?id=1",
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ status: "confirmed" }),
+            }
+          );
+
+          console.log("Response status:", response.status);
+          console.log(
+            "Response headers:",
+            Object.fromEntries(response.headers.entries())
+          );
+
+          const text = await response.text();
+          console.log("Response text:", text);
+
+          if (response.ok) {
+            resultDiv.innerHTML = `<p style="color: green;">Success: ${text}</p>`;
+          } else {
+            resultDiv.innerHTML = `<p style="color: red;">Error ${response.status}: ${text}</p>`;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          resultDiv.innerHTML = `<p style="color: red;">Network Error: ${error.message}</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>

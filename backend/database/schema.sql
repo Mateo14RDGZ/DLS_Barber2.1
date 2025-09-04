@@ -93,7 +93,7 @@ INSERT INTO
 VALUES (
         'Samuel',
         'samuel@dlsbarber.com',
-        '092870198',
+        '098863041',
         'Barbero Profesional'
     );
 
@@ -201,6 +201,6 @@ VALUES (
         'admin@dlsbarber.com',
         '$2a$10$example_hash_here',
         'Administrador DLS',
-        '092870198',
+        '098863041',
         'admin'
     );
