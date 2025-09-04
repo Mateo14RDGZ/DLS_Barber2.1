@@ -8,10 +8,10 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Content-Type', 'application/json');
   
-  console.log('🔍 [my-reservations] Iniciando endpoint consolidado');
+  console.log('🔍 [my-reservations] === INICIANDO ENDPOINT ===');
   console.log('📋 [my-reservations] Método:', req.method);
   console.log('📦 [my-reservations] URL:', req.url);
-  console.log('🔑 [my-reservations] Headers de autorización:', req.headers.authorization ? 'Presente' : 'Ausente');
+  console.log('🔑 [my-reservations] Authorization header:', req.headers.authorization ? 'PRESENTE' : 'AUSENTE');
   
   // Manejar preflight OPTIONS request
   if (req.method === 'OPTIONS') {
@@ -31,9 +31,10 @@ module.exports = async (req, res) => {
 
   try {
     // Verificar token
+    console.log('🔐 [my-reservations] === VERIFICANDO AUTENTICACIÓN ===');
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      console.log('❌ [my-reservations] Token no proporcionado');
+      console.log('❌ [my-reservations] No hay header de autorización');
       return res.status(401).json({ 
         success: false,
         error: 'No autorizado',
@@ -42,11 +43,13 @@ module.exports = async (req, res) => {
     }
     
     const token = authHeader.replace('Bearer ', '');
-    console.log('🔐 [my-reservations] Verificando token...');
+    console.log('🔐 [my-reservations] Token extraído, longitud:', token.length);
     
     const decoded = verifyToken(token);
-    if (!decoded || !decoded.userId) {
-      console.log('❌ [my-reservations] Token inválido');
+    console.log('🔓 [my-reservations] Token decodificado:', decoded ? 'VÁLIDO' : 'INVÁLIDO');
+    
+    if (!decoded) {
+      console.log('❌ [my-reservations] Token inválido (verifyToken retornó null)');
       return res.status(401).json({ 
         success: false,
         error: 'Token inválido',
@@ -54,15 +57,27 @@ module.exports = async (req, res) => {
       });
     }
     
+    console.log('📋 [my-reservations] Propiedades del token decodificado:', Object.keys(decoded));
+    console.log('👤 [my-reservations] UserId del token:', decoded.userId);
+    
+    if (!decoded.userId) {
+      console.log('❌ [my-reservations] Token no contiene userId');
+      return res.status(401).json({ 
+        success: false,
+        error: 'Token inválido',
+        message: 'Token de autorización no contiene información de usuario' 
+      });
+    }
+    
     const userId = decoded.userId;
-    console.log('👤 [my-reservations] Usuario autenticado:', userId);
+    console.log('✅ [my-reservations] Usuario autenticado:', userId);
     
     // Conectar a base de datos
-    console.log('🔌 [my-reservations] Conectando a base de datos...');
+    console.log('🔌 [my-reservations] === CONECTANDO A BASE DE DATOS ===');
     const db = await connectToDatabase();
     
     if (!db) {
-      console.error('❌ [my-reservations] No se pudo conectar a la base de datos');
+      console.error('❌ [my-reservations] Error: connectToDatabase retornó null/undefined');
       return res.status(500).json({ 
         success: false,
         error: 'Error de conexión',
@@ -73,7 +88,8 @@ module.exports = async (req, res) => {
     console.log('✅ [my-reservations] Conexión a base de datos establecida');
     
     // Obtener reservas del usuario
-    console.log('📊 [my-reservations] Ejecutando consulta de reservas para usuario:', userId);
+    console.log('📊 [my-reservations] === EJECUTANDO CONSULTA ===');
+    console.log('📊 [my-reservations] Usuario ID para consulta:', userId);
     
     const query = `
       SELECT 
@@ -86,6 +102,7 @@ module.exports = async (req, res) => {
         r.notes,
         r.created_at,
         r.updated_at,
+        r.user_id,
         b.name as barber_name,
         s.name as service_name,
         s.duration_minutes,
@@ -97,18 +114,26 @@ module.exports = async (req, res) => {
       ORDER BY r.reservation_date DESC, r.reservation_time DESC
     `;
     
-    console.log('📝 [my-reservations] Query SQL:', query);
-    console.log('📋 [my-reservations] Parámetros:', [userId]);
-    
+    console.log('📝 [my-reservations] Ejecutando consulta SQL...');
     const result = await db.query(query, [userId]);
     
-    console.log('📊 [my-reservations] Resultado de la consulta:');
-    console.log('- Filas encontradas:', result.rows?.length || 0);
-    console.log('- RowCount:', result.rowCount);
+    console.log('📊 [my-reservations] === RESULTADO DE CONSULTA ===');
+    console.log('📊 [my-reservations] Filas encontradas:', result.rows?.length || 0);
+    console.log('📊 [my-reservations] RowCount:', result.rowCount);
+    
+    if (result.rows && result.rows.length > 0) {
+      console.log('📋 [my-reservations] Primera reserva como ejemplo:', {
+        id: result.rows[0].id,
+        user_id: result.rows[0].user_id,
+        client_name: result.rows[0].client_name,
+        reservation_date: result.rows[0].reservation_date
+      });
+    }
     
     const reservations = result.rows || [];
     
     // Formatear las reservas
+    console.log('🔄 [my-reservations] === FORMATEANDO DATOS ===');
     const formattedReservations = reservations.map(reservation => ({
       id: reservation.id,
       client_name: reservation.client_name,
@@ -129,23 +154,25 @@ module.exports = async (req, res) => {
       }
     }));
     
-    console.log('✅ [my-reservations] Reservas obtenidas exitosamente');
-    console.log('📋 [my-reservations] Datos formateados:', formattedReservations.length, 'reservas');
+    console.log('✅ [my-reservations] === RESPUESTA EXITOSA ===');
+    console.log('📋 [my-reservations] Reservas formateadas:', formattedReservations.length);
     
     // Cambiar la estructura de respuesta para coincidir con lo que espera el frontend
     return res.status(200).json({
       success: true,
       message: 'Reservas obtenidas exitosamente',
-      reservations: formattedReservations, // Usar 'reservations' en lugar de 'data'
+      reservations: formattedReservations,
       count: formattedReservations.length
     });
     
   } catch (error) {
+    console.error('❌ [my-reservations] === ERROR CRÍTICO ===');
     console.error('❌ [my-reservations] Error:', {
       message: error.message,
       stack: error.stack,
       code: error.code,
-      detail: error.detail
+      detail: error.detail,
+      name: error.name
     });
     
     return res.status(500).json({

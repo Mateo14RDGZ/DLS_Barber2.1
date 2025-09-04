@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 // Clave secreta para firmar tokens (en producción, usar una variable de entorno)
-const JWT_SECRET = process.env.JWT_SECRET || 'dls_barber_secret_key_2025';
+const JWT_SECRET = process.env.JWT_SECRET || 'dls_barber_secret_key_2024';
 
 // Generar token JWT
 const generateToken = (user) => {
