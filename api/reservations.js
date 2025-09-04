@@ -49,14 +49,14 @@ async function handleCreateReservation(req, res) {
         const token = authHeader.replace('Bearer ', '');
         const decoded = verifyToken(token);
         
-        if (!decoded || !decoded.id) {
+        if (!decoded || !decoded.userId) {
             return res.status(401).json({ 
                 success: false,
                 error: 'Token inválido' 
             });
         }
         
-        const userId = decoded.id;
+        const userId = decoded.userId;
 
         const {
             barber_id,
@@ -188,14 +188,14 @@ async function handleMyReservations(req, res) {
         const token = authHeader.replace('Bearer ', '');
         const decoded = verifyToken(token);
         
-        if (!decoded || !decoded.id) {
+        if (!decoded || !decoded.userId) {
             return res.status(401).json({ 
                 success: false,
                 error: 'Token inválido' 
             });
         }
         
-        const userId = decoded.id;
+        const userId = decoded.userId;
         console.log('👤 [reservations/my] Usuario:', userId);
 
         console.log('🔌 [reservations/my] Conectando a base de datos...');

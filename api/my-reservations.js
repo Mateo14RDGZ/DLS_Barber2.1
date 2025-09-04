@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
     console.log('🔐 [my-reservations] Verificando token...');
     
     const decoded = verifyToken(token);
-    if (!decoded || !decoded.id) {
+    if (!decoded || !decoded.userId) {
       console.log('❌ [my-reservations] Token inválido');
       return res.status(401).json({ 
         success: false,
@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
       });
     }
     
-    const userId = decoded.id;
+    const userId = decoded.userId;
     console.log('👤 [my-reservations] Usuario autenticado:', userId);
     
     // Conectar a base de datos
