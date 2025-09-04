@@ -367,8 +367,10 @@ function resetForm() {
 async function loadUserReservations() {
     try {
         console.log('🔄 Cargando reservas del usuario...');
-        const data = await apiRequest('/reservations/my-reservations');
+        const data = await apiRequest('/my-reservations');
         console.log('📨 Respuesta del servidor:', data);
+        
+        // La API devuelve data.reservations ahora
         const reservations = data.reservations;
         console.log('📋 Reservas encontradas:', reservations?.length || 0);
         
