@@ -1,12 +1,5 @@
-const { Pool } = require('pg');
-const jwt = require('jsonwebtoken');
-
-const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
+const { connectToDatabase } = require('./_utils/database');
+const { verifyToken } = require('./_utils/auth');
 
 module.exports = async function handler(req, res) {
     // Configurar CORS
@@ -30,7 +23,7 @@ module.exports = async function handler(req, res) {
     } else if (action === 'all' || pathname.includes('/all')) {
         return await handleAllReservations(req, res);
     } else if (action === 'available-hours-query' || pathname.includes('/available-hours-query')) {
-        return await handleAvailableHoursQuery(req, res);
+        return await handleAvailableHours(req, res);
     } else if (action === 'available-hours' || pathname.includes('/available-hours')) {
         return await handleAvailableHours(req, res);
     } else if (req.method === 'POST') {
@@ -40,19 +33,30 @@ module.exports = async function handler(req, res) {
     }
 };
 
-// Verificar autenticación
-function verifyAuth(req) {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        throw new Error('Token no proporcionado');
-    }
-    return jwt.verify(token, process.env.JWT_SECRET || 'dls_barber_secret_key_2024');
-}
-
 async function handleCreateReservation(req, res) {
     try {
-        const decoded = verifyAuth(req);
-        const userId = decoded.userId;
+        console.log('🔍 [reservations/create] Iniciando creación de reserva');
+        
+        // Verificar token
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ 
+                success: false,
+                error: 'Token no proporcionado' 
+            });
+        }
+        
+        const token = authHeader.replace('Bearer ', '');
+        const decoded = verifyToken(token);
+        
+        if (!decoded || !decoded.id) {
+            return res.status(401).json({ 
+                success: false,
+                error: 'Token inválido' 
+            });
+        }
+        
+        const userId = decoded.id;
 
         const {
             barber_id,
@@ -65,215 +69,366 @@ async function handleCreateReservation(req, res) {
             notes
         } = req.body;
 
+        console.log('📋 [reservations/create] Datos recibidos:', {
+            barber_id, service_id, reservation_date, reservation_time, client_name, client_phone
+        });
+
         // Validaciones básicas
         if (!barber_id || !service_id || !reservation_date || !reservation_time || !client_name || !client_phone) {
-            return res.status(400).json({ error: 'Todos los campos requeridos deben ser proporcionados' });
+            return res.status(400).json({ 
+                success: false,
+                error: 'Todos los campos requeridos deben ser proporcionados' 
+            });
         }
 
-        const client = await pool.connect();
+        console.log('🔌 [reservations/create] Conectando a base de datos...');
+        const db = await connectToDatabase();
         
-        try {
-            // Verificar si el horario está disponible
-            const existingReservation = await client.query(`
-                SELECT id FROM reservations 
-                WHERE barber_id = $1 AND reservation_date = $2 AND reservation_time = $3 AND status != 'cancelled'
-            `, [barber_id, reservation_date, reservation_time]);
-            
-            if (existingReservation.rows.length > 0) {
-                return res.status(400).json({ error: 'El horario seleccionado ya está ocupado' });
-            }
-            
-            // Crear la reserva
-            const result = await client.query(`
+        if (!db) {
+            return res.status(500).json({ 
+                success: false,
+                error: 'Error de conexión a base de datos' 
+            });
+        }
+        
+        // Verificar si el horario está disponible
+        console.log('⏰ [reservations/create] Verificando disponibilidad...');
+        const existingReservation = await db.query(`
+            SELECT id FROM reservations 
+            WHERE barber_id = $1 AND reservation_date = $2 AND reservation_time = $3 AND status != 'cancelled'
+        `, [barber_id, reservation_date, reservation_time]);
+        
+        if (existingReservation.rows.length > 0) {
+            return res.status(400).json({ 
+                success: false,
+                error: 'El horario seleccionado ya está ocupado' 
+            });
+        }
+        
+        // Crear la reserva
+        console.log('✍️ [reservations/create] Creando reserva...');
+        const result = await db.query(`
                 INSERT INTO reservations 
                 (user_id, barber_id, service_id, reservation_date, reservation_time, client_name, client_phone, client_email, notes) 
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                 RETURNING id
-            `, [userId, barber_id, service_id, reservation_date, reservation_time, client_name, client_phone, client_email, notes]);
-            
-            // Obtener datos completos de la reserva creada
-            const reservation = await client.query(`
-                SELECT 
-                    r.id,
-                    r.reservation_date,
-                    r.reservation_time,
-                    r.client_name,
-                    r.client_phone,
-                    r.status,
-                    r.notes,
-                    r.created_at,
-                    b.name as barber_name,
-                    s.name as service_name,
-                    s.duration_minutes,
-                    s.price
-                FROM reservations r
-                LEFT JOIN barbers b ON r.barber_id = b.id
-                LEFT JOIN services s ON r.service_id = s.id
-                WHERE r.id = $1
-            `, [result.rows[0].id]);
-            
-            res.status(201).json({
-                message: 'Reserva creada exitosamente',
-                reservation: reservation.rows[0]
-            });
-        } finally {
-            client.release();
-        }
+            INSERT INTO reservations 
+            (user_id, barber_id, service_id, reservation_date, reservation_time, client_name, client_phone, client_email, notes) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING id
+        `, [userId, barber_id, service_id, reservation_date, reservation_time, client_name, client_phone, client_email, notes]);
+        
+        const reservationId = result.rows[0].id;
+        console.log('✅ [reservations/create] Reserva creada con ID:', reservationId);
+        
+        // Obtener datos completos de la reserva creada
+        const reservation = await db.query(`
+            SELECT 
+                r.id,
+                r.reservation_date,
+                r.reservation_time,
+                r.client_name,
+                r.client_phone,
+                r.status,
+                r.notes,
+                r.created_at,
+                b.name as barber_name,
+                s.name as service_name,
+                s.duration_minutes,
+                s.price
+            FROM reservations r
+            LEFT JOIN barbers b ON r.barber_id = b.id
+            LEFT JOIN services s ON r.service_id = s.id
+            WHERE r.id = $1
+        `, [reservationId]);
+        
+        console.log('✅ [reservations/create] Reserva creada exitosamente');
+        
+        return res.status(201).json({
+            success: true,
+            message: 'Reserva creada exitosamente',
+            reservation: reservation.rows[0]
+        });
+        
     } catch (error) {
-        console.error('Error creando reserva:', error);
-        if (error.message === 'Token no proporcionado') {
-            return res.status(401).json({ error: error.message });
-        }
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error('❌ [reservations/create] Error:', {
+            message: error.message,
+            stack: error.stack,
+            code: error.code
+        });
+        
+        return res.status(500).json({ 
+            success: false,
+            error: 'Error interno del servidor',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Error interno'
+        });
     }
 }
 
 async function handleMyReservations(req, res) {
     if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json({ 
+            success: false,
+            error: 'Method not allowed' 
+        });
     }
 
     try {
-        const decoded = verifyAuth(req);
-        const userId = decoded.userId;
-
-        const client = await pool.connect();
+        console.log('🔍 [reservations/my] Obteniendo reservas del usuario');
         
-        try {
-            const reservations = await client.query(`
-                SELECT 
-                    r.id,
-                    r.reservation_date,
-                    r.reservation_time,
-                    r.client_name,
-                    r.client_phone,
-                    r.client_email,
-                    r.status,
-                    r.notes,
-                    r.created_at,
-                    b.name as barber_name,
-                    s.name as service_name,
-                    s.duration_minutes,
-                    s.price
-                FROM reservations r
-                LEFT JOIN barbers b ON r.barber_id = b.id
-                LEFT JOIN services s ON r.service_id = s.id
-                WHERE r.user_id = $1
-                ORDER BY r.reservation_date DESC, r.reservation_time DESC
-            `, [userId]);
-            
-            res.json({ reservations: reservations.rows });
-        } finally {
-            client.release();
+        // Verificar token
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ 
+                success: false,
+                error: 'Token no proporcionado' 
+            });
         }
+        
+        const token = authHeader.replace('Bearer ', '');
+        const decoded = verifyToken(token);
+        
+        if (!decoded || !decoded.id) {
+            return res.status(401).json({ 
+                success: false,
+                error: 'Token inválido' 
+            });
+        }
+        
+        const userId = decoded.id;
+        console.log('👤 [reservations/my] Usuario:', userId);
+
+        console.log('🔌 [reservations/my] Conectando a base de datos...');
+        const db = await connectToDatabase();
+        
+        if (!db) {
+            return res.status(500).json({ 
+                success: false,
+                error: 'Error de conexión a base de datos' 
+            });
+        }
+        
+        const reservations = await db.query(`
+            SELECT 
+                r.id,
+                r.reservation_date,
+                r.reservation_time,
+                r.client_name,
+                r.client_phone,
+                r.client_email,
+                r.status,
+                r.notes,
+                r.created_at,
+                b.name as barber_name,
+                s.name as service_name,
+                s.duration_minutes,
+                s.price
+            FROM reservations r
+            LEFT JOIN barbers b ON r.barber_id = b.id
+            LEFT JOIN services s ON r.service_id = s.id
+            WHERE r.user_id = $1
+            ORDER BY r.reservation_date DESC, r.reservation_time DESC
+        `, [userId]);
+        
+        console.log('✅ [reservations/my] Reservas obtenidas:', reservations.rows?.length || 0);
+        
+        return res.json({ 
+            success: true,
+            reservations: reservations.rows || [] 
+        });
+        
     } catch (error) {
-        console.error('Error obteniendo mis reservas:', error);
-        if (error.message === 'Token no proporcionado') {
-            return res.status(401).json({ error: error.message });
-        }
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error('❌ [reservations/my] Error:', {
+            message: error.message,
+            stack: error.stack,
+            code: error.code
+        });
+        
+        return res.status(500).json({ 
+            success: false,
+            error: 'Error interno del servidor',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Error interno'
+        });
     }
 }
 
 async function handleAllReservations(req, res) {
     if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json({ 
+            success: false,
+            error: 'Method not allowed' 
+        });
     }
 
     try {
-        verifyAuth(req); // Solo verificar que esté autenticado
-
-        const client = await pool.connect();
+        console.log('🔍 [reservations/all] Obteniendo todas las reservas');
         
-        try {
-            const reservations = await client.query(`
-                SELECT 
-                    r.id,
-                    r.reservation_date,
-                    r.reservation_time,
-                    r.client_name,
-                    r.client_phone,
-                    r.client_email,
-                    r.status,
-                    r.notes,
-                    r.created_at,
-                    b.name as barber_name,
-                    s.name as service_name,
-                    s.duration_minutes,
-                    s.price,
-                    u.username
-                FROM reservations r
-                LEFT JOIN barbers b ON r.barber_id = b.id
-                LEFT JOIN services s ON r.service_id = s.id
-                LEFT JOIN users u ON r.user_id = u.id
-                ORDER BY r.reservation_date DESC, r.reservation_time DESC
-            `);
-            
-            res.json({ reservations: reservations.rows });
-        } finally {
-            client.release();
+        // Verificar token (solo para autenticados)
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ 
+                success: false,
+                error: 'Token no proporcionado' 
+            });
         }
+        
+        const token = authHeader.replace('Bearer ', '');
+        const decoded = verifyToken(token);
+        
+        if (!decoded) {
+            return res.status(401).json({ 
+                success: false,
+                error: 'Token inválido' 
+            });
+        }
+
+        console.log('🔌 [reservations/all] Conectando a base de datos...');
+        const db = await connectToDatabase();
+        
+        if (!db) {
+            return res.status(500).json({ 
+                success: false,
+                error: 'Error de conexión a base de datos' 
+            });
+        }
+        
+        const reservations = await db.query(`
+            SELECT 
+                r.id,
+                r.reservation_date,
+                r.reservation_time,
+                r.client_name,
+                r.client_phone,
+                r.client_email,
+                r.status,
+                r.notes,
+                r.created_at,
+                b.name as barber_name,
+                s.name as service_name,
+                s.duration_minutes,
+                s.price,
+                u.username
+            FROM reservations r
+            LEFT JOIN barbers b ON r.barber_id = b.id
+            LEFT JOIN services s ON r.service_id = s.id
+            LEFT JOIN users u ON r.user_id = u.id
+            ORDER BY r.reservation_date DESC, r.reservation_time DESC
+        `);
+        
+        console.log('✅ [reservations/all] Reservas obtenidas:', reservations.rows?.length || 0);
+        
+        return res.json({ 
+            success: true,
+            reservations: reservations.rows || [] 
+        });
+        
     } catch (error) {
-        console.error('Error obteniendo todas las reservas:', error);
-        if (error.message === 'Token no proporcionado') {
-            return res.status(401).json({ error: error.message });
-        }
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error('❌ [reservations/all] Error:', {
+            message: error.message,
+            stack: error.stack,
+            code: error.code
+        });
+        
+        return res.status(500).json({ 
+            success: false,
+            error: 'Error interno del servidor',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Error interno'
+        });
     }
 }
 
 async function handleAvailableHours(req, res) {
     if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json({ 
+            success: false,
+            error: 'Method not allowed' 
+        });
     }
 
     try {
+        console.log('🔍 [reservations/available-hours] Obteniendo horarios disponibles');
+        
         const { searchParams } = new URL(req.url, `http://${req.headers.host}`);
         const date = searchParams.get('date');
         const barber_id = searchParams.get('barber_id');
 
-        if (!date || !barber_id) {
-            return res.status(400).json({ error: 'Fecha y barbero son requeridos' });
+        console.log('📋 [reservations/available-hours] Parámetros:', { date, barber_id });
+
+        if (!date) {
+            return res.status(400).json({ 
+                success: false,
+                error: 'Fecha es requerida' 
+            });
         }
 
-        const client = await pool.connect();
+        console.log('🔌 [reservations/available-hours] Conectando a base de datos...');
+        const db = await connectToDatabase();
         
-        try {
-            // Generar horarios disponibles (10:00 AM - 6:00 PM, Lun-Vie; 10:00 AM - 3:00 PM, Sáb)
-            const requestDate = new Date(date);
-            const dayOfWeek = requestDate.getDay(); // 0 = Domingo, 6 = Sábado
-            
-            let endHour = 18; // 6:00 PM por defecto
-            if (dayOfWeek === 6) { // Sábado
-                endHour = 15; // 3:00 PM
-            } else if (dayOfWeek === 0) { // Domingo
-                return res.json({ available_hours: [] }); // Cerrado los domingos
-            }
-
-            const availableHours = [];
-            for (let hour = 10; hour < endHour; hour++) {
-                for (let minute = 0; minute < 60; minute += 45) {
-                    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                    availableHours.push(timeString);
-                }
-            }
-
-            // Obtener reservas existentes para este barbero y fecha
-            const existingReservations = await client.query(
-                'SELECT reservation_time FROM reservations WHERE barber_id = $1 AND reservation_date = $2 AND status != $3',
-                [barber_id, date, 'cancelled']
-            );
-
-            const reservedHours = existingReservations.rows.map(row => row.reservation_time.slice(0, 5));
-            const finalAvailableHours = availableHours.filter(hour => !reservedHours.includes(hour));
-
-            res.json({ available_hours: finalAvailableHours });
-        } finally {
-            client.release();
+        if (!db) {
+            return res.status(500).json({ 
+                success: false,
+                error: 'Error de conexión a base de datos' 
+            });
         }
+        
+        // Generar horarios disponibles (9:00 AM - 6:00 PM)
+        const requestDate = new Date(date);
+        const dayOfWeek = requestDate.getDay(); // 0 = Domingo, 6 = Sábado
+        
+        let endHour = 18; // 6:00 PM por defecto
+        if (dayOfWeek === 6) { // Sábado
+            endHour = 15; // 3:00 PM
+        } else if (dayOfWeek === 0) { // Domingo
+            console.log('📅 [reservations/available-hours] Domingo - cerrado');
+            return res.json({ 
+                success: true,
+                available_hours: [] 
+            }); // Cerrado los domingos
+        }
+
+        const availableHours = [];
+        for (let hour = 9; hour < endHour; hour++) {
+            for (let minute = 0; minute < 60; minute += 30) { // Cada 30 minutos
+                const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                availableHours.push(timeString);
+            }
+        }
+
+        console.log('⏰ [reservations/available-hours] Horarios base generados:', availableHours.length);
+
+        // Obtener reservas existentes para esta fecha (y barbero si se especifica)
+        let query = 'SELECT reservation_time FROM reservations WHERE reservation_date = $1 AND status NOT IN ($2, $3)';
+        let params = [date, 'cancelled', 'completed'];
+        
+        if (barber_id) {
+            query += ' AND barber_id = $4';
+            params.push(barber_id);
+        }
+
+        const existingReservations = await db.query(query, params);
+        const reservedHours = existingReservations.rows.map(row => row.reservation_time.slice(0, 5));
+        const finalAvailableHours = availableHours.filter(hour => !reservedHours.includes(hour));
+
+        console.log('✅ [reservations/available-hours] Horarios disponibles:', finalAvailableHours.length);
+        console.log('📋 [reservations/available-hours] Reservados:', reservedHours);
+
+        return res.json({ 
+            success: true,
+            available_hours: finalAvailableHours 
+        });
+        
     } catch (error) {
-        console.error('Error obteniendo horarios disponibles:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error('❌ [reservations/available-hours] Error:', {
+            message: error.message,
+            stack: error.stack,
+            code: error.code
+        });
+        
+        return res.status(500).json({ 
+            success: false,
+            error: 'Error interno del servidor',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Error interno'
+        });
     }
 }
 
