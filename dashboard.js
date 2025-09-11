@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadInitialData() {
     try {
         // Cargar barberos
-        const barbersData = await apiRequest('/');
+        const barbersData = await apiRequest('/general');
         barbers = barbersData.barbers;
         
         console.log('✅ Barberos cargados:', barbers.length);
