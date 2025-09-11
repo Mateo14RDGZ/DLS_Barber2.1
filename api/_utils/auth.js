@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dls_barber_secret_key_2024';
 const generateToken = (user) => {
   return jwt.sign(
     {
-      id: user.id,
+      userId: user.id,  // Cambiado de 'id' a 'userId' para consistencia
       email: user.email,
       role: user.role || 'user',
       name: user.name || user.username

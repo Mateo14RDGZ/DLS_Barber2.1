@@ -108,10 +108,6 @@ async function handleCreateReservation(req, res) {
         // Crear la reserva
         console.log('✍️ [reservations/create] Creando reserva...');
         const result = await db.query(`
-                INSERT INTO reservations 
-                (user_id, barber_id, service_id, reservation_date, reservation_time, client_name, client_phone, client_email, notes) 
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-                RETURNING id
             INSERT INTO reservations 
             (user_id, barber_id, service_id, reservation_date, reservation_time, client_name, client_phone, client_email, notes) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
