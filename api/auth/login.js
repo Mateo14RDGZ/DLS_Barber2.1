@@ -3,99 +3,44 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 module.exports = async (req, res) => {
-    try {
-        // Configuración CORS
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        res.setHeader('Content-Type', 'application/json');
-        
-        console.log('🔐 [auth/login] === INICIANDO LOGIN ===');
-        console.log('🔐 [auth/login] Método:', req.method);
-        console.log('🔐 [auth/login] Headers:', req.headers);
-        
-        // Manejar preflight OPTIONS request
-        if (req.method === 'OPTIONS') {
-            console.log('✅ [auth/login] Respondiendo a OPTIONS');
-            return res.status(200).end();
-        }
-        
-        // Solo permitir POST para login
-        if (req.method !== 'POST') {
-            console.log('❌ [auth/login] Método no permitido:', req.method);
-            return res.status(405).json({ 
-                success: false,
-                error: 'Método no permitido',
-                message: 'Solo se permite POST para login' 
-            });
-        }
+    // Configuración CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Content-Type', 'application/json');
+    
+    // Manejar preflight OPTIONS request
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    
+    // Solo permitir POST para login
+    if (req.method !== 'POST') {
+        return res.status(405).json({ 
+            success: false,
+            error: 'Método no permitido' 
+        });
+    }
 
-        console.log('📋 [auth/login] Extrayendo datos del body...');
-        console.log('📋 [auth/login] req.body type:', typeof req.body);
-        console.log('📋 [auth/login] req.body raw:', req.body);
+    try {
+        console.log('� [auth/login] === INICIANDO LOGIN ===');
         
-        // Asegurar que el body esté parseado correctamente
-        let body = req.body;
+        // Extraer datos del body
+        const { email, password } = req.body || {};
         
-        // Si el body está vacío, intentar leer desde el stream
-        if (!body || (typeof body === 'object' && Object.keys(body).length === 0)) {
-            console.log('📋 [auth/login] Body vacío, intentando leer desde stream...');
-            try {
-                const chunks = [];
-                for await (const chunk of req) {
-                    chunks.push(chunk);
-                }
-                const rawBody = Buffer.concat(chunks).toString();
-                console.log('📋 [auth/login] Raw body desde stream:', rawBody);
-                body = JSON.parse(rawBody);
-            } catch (e) {
-                console.error('❌ [auth/login] Error leyendo desde stream:', e);
-                return res.status(400).json({ 
-                    success: false,
-                    error: 'No se pudieron leer los datos de la petición' 
-                });
-            }
-        }
-        
-        if (typeof body === 'string') {
-            try {
-                body = JSON.parse(body);
-                console.log('📋 [auth/login] Body parseado desde string');
-            } catch (e) {
-                console.error('❌ [auth/login] Error parseando body:', e);
-                return res.status(400).json({ 
-                    success: false,
-                    error: 'Formato de datos inválido' 
-                });
-            }
-        }
-        
-        console.log('📋 [auth/login] Body procesado:', body);
-        
-        const { email, password } = body;
-        console.log('📋 [auth/login] Email:', email);
+        console.log('📋 [auth/login] Email recibido:', email);
         console.log('📋 [auth/login] Password length:', password ? password.length : 'undefined');
 
         if (!email || !password) {
-            console.log('❌ [auth/login] Campos faltantes');
             return res.status(400).json({ 
                 success: false,
                 error: 'Email y contraseña son requeridos' 
             });
         }
 
-        console.log('🔌 [auth/login] Intentando conectar a base de datos...');
+        console.log('🔌 [auth/login] Conectando a base de datos...');
         const db = await connectToDatabase();
         
-        if (!db) {
-            console.error('❌ [auth/login] Error de conexión a base de datos');
-            return res.status(500).json({ 
-                success: false,
-                error: 'Error de conexión a base de datos' 
-            });
-        }
-        
-        console.log('✅ [auth/login] Conexión a DB exitosa');
         console.log('👤 [auth/login] Buscando usuario:', email);
         
         // Buscar usuario
@@ -104,10 +49,7 @@ module.exports = async (req, res) => {
             [email]
         );
 
-        console.log('📊 [auth/login] Resultado consulta usuarios:', userQuery.rows.length);
-
         if (userQuery.rows.length === 0) {
-            console.log('❌ [auth/login] Usuario no encontrado');
             return res.status(401).json({ 
                 success: false,
                 error: 'Credenciales inválidas' 
@@ -115,23 +57,18 @@ module.exports = async (req, res) => {
         }
 
         const user = userQuery.rows[0];
-        console.log('✅ [auth/login] Usuario encontrado:', user.id, user.email);
+        console.log('✅ [auth/login] Usuario encontrado:', user.id);
 
         // Verificar contraseña
-        console.log('🔐 [auth/login] Verificando contraseña...');
         const isValidPassword = await bcrypt.compare(password, user.password);
-        console.log('🔐 [auth/login] Contraseña válida:', isValidPassword);
 
         if (!isValidPassword) {
-            console.log('❌ [auth/login] Contraseña inválida');
             return res.status(401).json({ 
                 success: false,
                 error: 'Credenciales inválidas' 
             });
         }
 
-        console.log('🔑 [auth/login] Generando token JWT...');
-        
         // Generar token JWT
         const token = jwt.sign(
             { 
@@ -156,18 +93,12 @@ module.exports = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ [auth/login] Error crítico:', {
-            message: error.message,
-            stack: error.stack,
-            code: error.code,
-            name: error.name
-        });
+        console.error('❌ [auth/login] Error crítico:', error);
         
         return res.status(500).json({ 
             success: false,
             error: 'Error interno del servidor',
-            message: error.message,
-            details: process.env.NODE_ENV === 'development' ? error.stack : 'Error interno'
+            message: error.message
         });
     }
 };
