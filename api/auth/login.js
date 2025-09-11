@@ -31,9 +31,25 @@ module.exports = async (req, res) => {
         }
 
         console.log('📋 [auth/login] Extrayendo datos del body...');
-        console.log('� [auth/login] Body raw:', req.body);
         
-        const { email, password } = req.body;
+        // Asegurar que el body esté parseado correctamente
+        let body = req.body;
+        if (typeof body === 'string') {
+            try {
+                body = JSON.parse(body);
+                console.log('📋 [auth/login] Body parseado desde string');
+            } catch (e) {
+                console.error('❌ [auth/login] Error parseando body:', e);
+                return res.status(400).json({ 
+                    success: false,
+                    error: 'Formato de datos inválido' 
+                });
+            }
+        }
+        
+        console.log('📋 [auth/login] Body procesado:', body);
+        
+        const { email, password } = body;
         console.log('📋 [auth/login] Email:', email);
         console.log('📋 [auth/login] Password length:', password ? password.length : 'undefined');
 

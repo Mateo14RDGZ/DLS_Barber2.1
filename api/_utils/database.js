@@ -1,30 +1,19 @@
 const { Pool } = require('pg');
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
-const path = require('path');
 
-// Variables para mantener las conexiones
+// Pool de conexiones global para Neon PostgreSQL
 let pgPool;
-let sqliteDb;
-let dbType;
 
-// Función para determinar qué base de datos usar
-const determineDbType = () => {
-  // En Vercel (producción) siempre usar PostgreSQL
-  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-    if (!process.env.DATABASE_URL) {
-      console.error('⚠️ ADVERTENCIA: DATABASE_URL no configurada en producción');
-    }
-    return 'postgres';
-  }
-  // En desarrollo, usaremos SQLite
-  return 'sqlite';
-};
-
-// Conectar a PostgreSQL (optimizado para Neon)
+// Conectar a Neon PostgreSQL - ÚNICA OPCIÓN DE BASE DE DATOS
 const connectToPostgres = async () => {
   if (!pgPool) {
-    // Configuración específica para Neon
+    console.log('🔌 [Neon] Inicializando pool de conexiones...');
+    
+    // Verificar que DATABASE_URL esté configurada
+    if (!process.env.DATABASE_URL) {
+      throw new Error('DATABASE_URL es requerida para conectar a Neon PostgreSQL');
+    }
+    
+    // Configuración específica para Neon PostgreSQL
     pgPool = new Pool({
       connectionString: process.env.DATABASE_URL,
       ssl: {
@@ -37,132 +26,93 @@ const connectToPostgres = async () => {
       allowExitOnIdle: true
     });
     
-    console.log('🔌 Configurando pool de conexiones para Neon PostgreSQL');
+    console.log('✅ [Neon] Pool de conexiones configurado');
   }
   
   // Probar la conexión
   try {
     const client = await pgPool.connect();
-    console.log('✅ Cliente PostgreSQL conectado exitosamente');
+    console.log('✅ [Neon] Cliente conectado exitosamente');
     client.release();
-    console.log('✅ Conexión a Neon PostgreSQL establecida');
+    console.log('✅ [Neon] Conexión verificada y liberada');
     
     return {
       query: async (text, params) => {
-        console.log('🔍 Ejecutando query:', text.substring(0, 50) + '...');
-        const result = await pgPool.query(text, params);
-        console.log('✅ Query ejecutada, filas afectadas:', result.rowCount);
-        return result;
+        console.log('🔍 [Neon Query] Ejecutando:', text.substring(0, 100) + (text.length > 100 ? '...' : ''));
+        console.log('📋 [Neon Query] Parámetros:', params);
+        
+        try {
+          const result = await pgPool.query(text, params);
+          console.log('✅ [Neon Query] Ejecutada exitosamente, filas:', result.rowCount);
+          return result;
+        } catch (queryError) {
+          console.error('❌ [Neon Query] Error:', {
+            message: queryError.message,
+            code: queryError.code,
+            detail: queryError.detail,
+            query: text.substring(0, 100)
+          });
+          throw queryError;
+        }
       },
-      close: () => pgPool.end()
+      close: () => {
+        console.log('🔌 [Neon] Cerrando pool de conexiones');
+        return pgPool.end();
+      }
     };
   } catch (error) {
-    console.error('❌ Error conectando a Neon PostgreSQL:', {
+    console.error('❌ [Neon] Error conectando:', {
       message: error.message,
       code: error.code,
-      detail: error.detail
+      detail: error.detail,
+      hint: error.hint
     });
     throw error;
   }
 };
 
-// Conectar a SQLite
-const connectToSqlite = async () => {
-  if (!sqliteDb) {
-    const dbPath = path.join(process.cwd(), 'database', 'dls_barber.sqlite');
-    
-    try {
-      sqliteDb = await open({
-        filename: dbPath,
-        driver: sqlite3.Database
-      });
-      
-      console.log('✅ Conexión a SQLite exitosa');
-    } catch (error) {
-      console.error('❌ Error conectando a SQLite:', error);
-      throw error;
-    }
-  }
-  
-  // Adaptar la interfaz para que sea similar a PostgreSQL
-  return {
-    query: async (text, params = []) => {
-      // Convertir placeholder de PostgreSQL ($1, $2) a SQLite (?, ?)
-      const sqliteQuery = text.replace(/\$(\d+)/g, '?');
-      
-      try {
-        if (text.trim().toUpperCase().startsWith('SELECT')) {
-          const rows = await sqliteDb.all(sqliteQuery, params);
-          return { rows, rowCount: rows.length };
-        } else {
-          const result = await sqliteDb.run(sqliteQuery, params);
-          return { 
-            rows: result.lastID ? [{ id: result.lastID }] : [],
-            rowCount: result.changes
-          };
-        }
-      } catch (error) {
-        console.error('❌ Error ejecutando query en SQLite:', error);
-        throw error;
-      }
-    },
-    close: async () => {
-      if (sqliteDb) {
-        await sqliteDb.close();
-        sqliteDb = null;
-      }
-    }
-  };
-};
-
-// Función principal para conectar a la base de datos
+// Función principal para conectar ÚNICAMENTE a Neon PostgreSQL
 const connectToDatabase = async () => {
   try {
-    // Determinar qué base de datos usar si aún no se ha decidido
-    if (!dbType) {
-      dbType = determineDbType();
-      console.log(`🔍 Usando ${dbType === 'postgres' ? 'PostgreSQL (Neon)' : 'SQLite'} para la conexión`);
-      console.log(`🌐 Entorno: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🚀 Plataforma: ${process.env.VERCEL ? 'Vercel' : 'Local'}`);
-      
-      if (dbType === 'postgres') {
-        const hasDbUrl = !!process.env.DATABASE_URL;
-        console.log(`🔌 URL de conexión Neon: ${hasDbUrl ? 'Configurada ✅' : 'No configurada ❌'}`);
-        
-        if (hasDbUrl) {
-          // Mostrar info básica de la URL sin revelar credenciales
-          const url = new URL(process.env.DATABASE_URL);
-          console.log(`📡 Host: ${url.hostname}`);
-          console.log(`🔐 SSL: ${url.searchParams.get('sslmode') || 'habilitado'}`);
-        }
-      }
+    console.log('🔍 [Database] === INICIANDO CONEXIÓN A NEON POSTGRESQL ===');
+    
+    // Verificar configuración
+    if (!process.env.DATABASE_URL) {
+      console.error('❌ [Database] DATABASE_URL no configurada');
+      throw new Error('DATABASE_URL es requerida para conectar a Neon PostgreSQL');
     }
     
-    // Conectar a la base de datos apropiada
-    if (dbType === 'postgres') {
-      return await connectToPostgres();
-    } else {
-      return await connectToSqlite();
-    }
+    // Mostrar información de conexión (sin credenciales)
+    const url = new URL(process.env.DATABASE_URL);
+    console.log('🌐 [Database] Información de conexión:');
+    console.log(`   📡 Host: ${url.hostname}`);
+    console.log(`   🏗️ Base de datos: ${url.pathname.substring(1)}`);
+    console.log(`   🔐 SSL: Habilitado`);
+    console.log(`   🚀 Plataforma: ${process.env.VERCEL ? 'Vercel' : 'Local'}`);
+    console.log(`   🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
+    
+    // Conectar a PostgreSQL (Neon) - ÚNICO MÉTODO SOPORTADO
+    const db = await connectToPostgres();
+    console.log('✅ [Database] === CONEXIÓN A NEON POSTGRESQL EXITOSA ===');
+    
+    return db;
+    
   } catch (error) {
-    console.error('❌ Error crítico al conectar a la base de datos:', {
+    console.error('❌ [Database] === ERROR CRÍTICO DE CONEXIÓN ===');
+    console.error('❌ [Database] Error:', {
       message: error.message,
       code: error.code,
-      stack: error.stack
+      detail: error.detail,
+      hint: error.hint
     });
     
-    // Retornar un objeto que no fallará pero registrará el error
-    return {
-      query: async () => {
-        console.error('❌ Intento de consulta a base de datos fallida - conexión no establecida');
-        throw new Error(`No se pudo establecer conexión con la base de datos: ${error.message}`);
-      },
-      close: () => {}
-    };
+    // NO devolver un mock - fallar explícitamente para que se note el problema
+    throw new Error(`Falla crítica de conexión a Neon PostgreSQL: ${error.message}`);
   }
 };
 
 module.exports = {
-  connectToDatabase,
-  determineDbType
+  connectToDatabase
 };
+
+
