@@ -17,20 +17,26 @@ module.exports = async function handler(req, res) {
     const { pathname, searchParams } = new URL(req.url, `http://${req.headers.host}`);
     const action = searchParams.get('action');
     
-    console.log('🔍 Auth API - pathname:', pathname, 'action:', action, 'method:', req.method);
+    console.log('🔍 Auth API Main - pathname:', pathname, 'action:', action, 'method:', req.method);
     
-    // Determinar la acción basada en la URL o el parámetro action
-    if (action === 'login' || pathname.includes('/login') || (pathname === '/api/auth' && req.method === 'POST' && !action)) {
+    // Solo manejar peticiones con parámetro action explícito
+    if (action === 'login') {
         return await handleLogin(req, res);
-    } else if (action === 'register' || pathname.includes('/register')) {
+    } else if (action === 'register') {
         return await handleRegister(req, res);
     } else {
-        console.log('❌ Auth API - Endpoint no encontrado para:', pathname);
+        // Para otras rutas, devolver información de endpoints disponibles
         return res.status(404).json({ 
             success: false,
-            error: 'Endpoint not found',
+            error: 'Endpoint no encontrado en auth.js principal',
+            message: 'Use /api/auth/login o /api/auth/register para autenticación',
             pathname: pathname,
-            available_endpoints: ['/api/auth?action=login', '/api/auth?action=register']
+            available_endpoints: [
+                'POST /api/auth/login',
+                'POST /api/auth/register',
+                'POST /api/auth?action=login',
+                'POST /api/auth?action=register'
+            ]
         });
     }
 };
@@ -209,7 +215,7 @@ async function handleRegister(req, res) {
             `INSERT INTO users (username, email, password_hash, full_name, phone, role, created_at) 
              VALUES ($1, $2, $3, $4, $5, $6, NOW()) 
              RETURNING id, username, email, full_name, phone, role, created_at`,
-            [username, email, hashedPassword, full_name, phone || '', 'customer']
+            [username, email, hashedPassword, full_name, phone || '', 'user']
         );
 
         const newUser = result.rows[0];

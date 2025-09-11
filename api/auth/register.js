@@ -94,7 +94,7 @@ module.exports = async (req, res) => {
             `INSERT INTO users (username, email, password_hash, full_name, phone, role, created_at) 
              VALUES ($1, $2, $3, $4, $5, $6, NOW()) 
              RETURNING id, username, email, full_name, phone, role, created_at`,
-            [username, email, hashedPassword, full_name, phone || '', 'customer']
+            [username, email, hashedPassword, full_name, phone || '', 'user']
         );
 
         const newUser = result.rows[0];
