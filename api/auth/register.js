@@ -91,7 +91,7 @@ module.exports = async (req, res) => {
         
         // Insertar nuevo usuario
         const result = await db.query(
-            `INSERT INTO users (username, email, password_hash, full_name, phone, role, created_at) 
+            `INSERT INTO users (username, email, password, full_name, phone, role, created_at) 
              VALUES ($1, $2, $3, $4, $5, $6, NOW()) 
              RETURNING id, username, email, full_name, phone, role, created_at`,
             [username, email, hashedPassword, full_name, phone || '', 'user']

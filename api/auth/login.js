@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
         
         // Buscar usuario
         const userQuery = await db.query(
-            'SELECT id, username, email, password_hash as password, full_name, phone, role FROM users WHERE email = $1',
+            'SELECT id, username, email, password, full_name, phone, role FROM users WHERE email = $1',
             [email]
         );
 
