@@ -31,9 +31,32 @@ module.exports = async (req, res) => {
         }
 
         console.log('📋 [auth/login] Extrayendo datos del body...');
+        console.log('📋 [auth/login] req.body type:', typeof req.body);
+        console.log('📋 [auth/login] req.body raw:', req.body);
         
         // Asegurar que el body esté parseado correctamente
         let body = req.body;
+        
+        // Si el body está vacío, intentar leer desde el stream
+        if (!body || (typeof body === 'object' && Object.keys(body).length === 0)) {
+            console.log('📋 [auth/login] Body vacío, intentando leer desde stream...');
+            try {
+                const chunks = [];
+                for await (const chunk of req) {
+                    chunks.push(chunk);
+                }
+                const rawBody = Buffer.concat(chunks).toString();
+                console.log('📋 [auth/login] Raw body desde stream:', rawBody);
+                body = JSON.parse(rawBody);
+            } catch (e) {
+                console.error('❌ [auth/login] Error leyendo desde stream:', e);
+                return res.status(400).json({ 
+                    success: false,
+                    error: 'No se pudieron leer los datos de la petición' 
+                });
+            }
+        }
+        
         if (typeof body === 'string') {
             try {
                 body = JSON.parse(body);

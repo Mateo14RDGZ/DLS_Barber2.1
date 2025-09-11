@@ -65,12 +65,16 @@ async function apiRequest(endpoint, options = {}) {
         const data = await response.json();
         
         if (!response.ok) {
+            console.error('❌ Respuesta de error del servidor:', data);
+            
             // Si hay detalles de validación, incluirlos en el error
-            if (data.details && data.details.length > 0) {
+            if (data.details && Array.isArray(data.details) && data.details.length > 0) {
                 const errorMessages = data.details.map(detail => detail.msg).join(', ');
                 throw new Error(errorMessages);
             } else {
-                throw new Error(data.error || 'Error en la petición');
+                // Usar el mensaje de error del servidor o uno genérico
+                const errorMessage = data.error || data.message || 'Error en la petición';
+                throw new Error(errorMessage);
             }
         }
         
