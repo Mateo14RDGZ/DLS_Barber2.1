@@ -40,14 +40,17 @@ document.addEventListener('DOMContentLoaded', function() {
     loadUserReservations();
 });
 
+// Dashboard para DLS Barber - Versión actualizada 2025-09-11 17:45
 // Cargar datos iniciales (solo barberos)
 async function loadInitialData() {
     try {
+        console.log('🔄 Cargando barberos desde /api/general...');
         // Cargar barberos
         const barbersData = await apiRequest('/general');
         barbers = barbersData.barbers;
         
-        console.log('✅ Barberos cargados:', barbers.length);
+        console.log('✅ Barberos cargados:', barbers ? barbers.length : 'No hay barberos');
+        console.log('📊 Datos recibidos:', barbersData);
         
     } catch (error) {
         console.error('Error cargando datos iniciales:', error);
