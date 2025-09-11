@@ -17,15 +17,21 @@ module.exports = async function handler(req, res) {
     const { pathname, searchParams } = new URL(req.url, `http://${req.headers.host}`);
     const action = searchParams.get('action');
     
-    console.log('🔍 Auth API - pathname:', pathname, 'action:', action);
+    console.log('🔍 Auth API - pathname:', pathname, 'action:', action, 'method:', req.method);
     
-    // Determinar la acción basada en la URL
-    if (action === 'login' || pathname.includes('/login')) {
+    // Determinar la acción basada en la URL o el parámetro action
+    if (action === 'login' || pathname.includes('/login') || (pathname === '/api/auth' && req.method === 'POST' && !action)) {
         return await handleLogin(req, res);
     } else if (action === 'register' || pathname.includes('/register')) {
         return await handleRegister(req, res);
     } else {
-        return res.status(404).json({ error: 'Endpoint not found' });
+        console.log('❌ Auth API - Endpoint no encontrado para:', pathname);
+        return res.status(404).json({ 
+            success: false,
+            error: 'Endpoint not found',
+            pathname: pathname,
+            available_endpoints: ['/api/auth?action=login', '/api/auth?action=register']
+        });
     }
 };
 
@@ -60,7 +66,7 @@ async function handleLogin(req, res) {
         
         // Buscar usuario
         const userQuery = await db.query(
-            'SELECT id, username, email, password, full_name, phone, role FROM users WHERE email = $1',
+            'SELECT id, username, email, password_hash as password, full_name, phone, role FROM users WHERE email = $1',
             [email]
         );
 
@@ -200,7 +206,7 @@ async function handleRegister(req, res) {
         
         // Insertar nuevo usuario
         const result = await db.query(
-            `INSERT INTO users (username, email, password, full_name, phone, role, created_at) 
+            `INSERT INTO users (username, email, password_hash, full_name, phone, role, created_at) 
              VALUES ($1, $2, $3, $4, $5, $6, NOW()) 
              RETURNING id, username, email, full_name, phone, role, created_at`,
             [username, email, hashedPassword, full_name, phone || '', 'customer']
