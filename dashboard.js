@@ -437,13 +437,13 @@ async function loadUserReservations() {
                     </div>
                     <h4>💇‍♂️ ${reservation.service_name}</h4>
                     <div class="reservation-details">
-                        <p><strong>👨‍💼 Barbero:</strong> ${reservation.barber_name}</p>
+
                         <p><strong>� Fecha:</strong> ${formattedDate}</p>
                         <p><strong>🕐 Hora:</strong> ${formattedTime}</p>
                         <p><strong>� Teléfono:</strong> ${reservation.client_phone}</p>
-                        <p><strong>✉️ Email:</strong> ${reservation.client_email}</p>
-                        <p><strong>💰 Precio:</strong> $${parseFloat(reservation.price).toLocaleString('es-ES')}</p>
-                        <p><strong>⏱️ Duración:</strong> ${reservation.duration_minutes} minutos</p>
+                        <p><strong>✉️ Email:</strong> ${reservation.client_email || reservation.user_email || 'No disponible'}</p>
+
+
                         ${reservation.notes ? `<p><strong>� Notas:</strong> ${reservation.notes}</p>` : ''}
                     </div>
                     <div class="reservation-footer">
