@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
     <style>
+      body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+
       .admin-container {
         max-width: 1200px;
         margin: 20px auto;
@@ -117,18 +124,22 @@
       }
 
       .btn-confirm {
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
+        background: linear-gradient(135deg, #d4af37, #f4e4c1);
+        color: #1a1a1a;
+        font-weight: bold;
       }
 
       .btn-cancel {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
+        background: linear-gradient(135deg, #8b0000, #dc143c);
         color: white;
+        font-weight: bold;
       }
 
       .btn-details {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: white;
+        background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+        color: #d4af37;
+        border: 1px solid #d4af37;
+        font-weight: bold;
       }
 
       /* Estilo para botones deshabilitados */
@@ -168,10 +179,11 @@
       }
 
       .reservations-section {
-        background: rgba(17, 24, 39, 0.95);
-        padding: 20px;
+        background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+        padding: 25px;
         border-radius: 15px;
-        border: 1px solid rgba(20, 184, 166, 0.3);
+        border: 2px solid rgba(212, 175, 55, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
 
       .filters {
@@ -188,17 +200,26 @@
       }
 
       .filter-group label {
-        color: #9ca3af;
+        color: #d4af37;
         font-size: 0.9rem;
+        font-weight: 600;
       }
 
       .filter-group select,
       .filter-group input {
         padding: 10px;
-        border: 1px solid rgba(20, 184, 166, 0.3);
+        border: 2px solid rgba(212, 175, 55, 0.3);
         border-radius: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
+        background: rgba(45, 45, 45, 0.5);
+        color: #ffffff;
+        transition: all 0.3s ease;
+      }
+
+      .filter-group select:focus,
+      .filter-group input:focus {
+        border-color: #d4af37;
+        outline: none;
+        background: rgba(45, 45, 45, 0.8);
       }
 
       .reservations-table {
@@ -215,40 +236,53 @@
       .table td {
         padding: 12px;
         text-align: left;
-        border-bottom: 1px solid rgba(20, 184, 166, 0.3);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
       }
 
       .table th {
-        background: rgba(20, 184, 166, 0.2);
-        color: #14b8a6;
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+        color: #d4af37;
         font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
       }
 
       .table td {
         color: #e5e7eb;
       }
 
+      .table tbody tr {
+        transition: all 0.3s ease;
+      }
+
+      .table tbody tr:hover {
+        background: rgba(212, 175, 55, 0.05);
+      }
+
       .status-badge {
-        padding: 4px 8px;
-        border-radius: 15px;
-        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
         font-weight: bold;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       .status-pending {
-        background: #fbbf24;
-        color: #92400e;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: #1a1a1a;
       }
 
       .status-confirmed {
-        background: #10b981;
-        color: #064e3b;
+        background: linear-gradient(135deg, #d4af37, #f4e4c1);
+        color: #1a1a1a;
       }
 
       .status-cancelled {
-        background: #ef4444;
-        color: #7f1d1d;
+        background: linear-gradient(135deg, #8b0000, #dc143c);
+        color: white;
       }
 
       .action-buttons {
@@ -266,30 +300,38 @@
       }
 
       .btn-confirm {
-        background: #10b981;
-        color: white;
+        background: linear-gradient(135deg, #d4af37, #f4e4c1);
+        color: #1a1a1a;
+        font-weight: bold;
       }
 
       .btn-confirm:hover {
-        background: #059669;
+        background: linear-gradient(135deg, #f4e4c1, #d4af37);
+        transform: scale(1.05);
       }
 
       .btn-cancel {
-        background: #ef4444;
+        background: linear-gradient(135deg, #8b0000, #dc143c);
         color: white;
+        font-weight: bold;
       }
 
       .btn-cancel:hover {
-        background: #dc2626;
+        background: linear-gradient(135deg, #dc143c, #8b0000);
+        transform: scale(1.05);
       }
 
       .btn-details {
-        background: #3b82f6;
-        color: white;
+        background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+        color: #d4af37;
+        border: 1px solid #d4af37;
+        font-weight: bold;
       }
 
       .btn-details:hover {
-        background: #2563eb;
+        background: linear-gradient(135deg, #d4af37, #f4e4c1);
+        color: #1a1a1a;
+        transform: scale(1.05);
       }
 
       .logout-btn {
@@ -316,14 +358,17 @@
 
       .loading {
         text-align: center;
-        color: #9ca3af;
+        color: #d4af37;
         padding: 40px;
+        font-size: 1.1rem;
+        font-weight: 500;
       }
 
       .no-data {
         text-align: center;
-        color: #9ca3af;
+        color: #c0c0c0;
         padding: 40px;
+        font-size: 1rem;
       }
 
       @media (max-width: 768px) {
@@ -400,12 +445,6 @@
             <select id="barber-filter">
               <option value="">Todos</option>
             </select>
-          </div>
-          <div class="filter-group">
-            <label>&nbsp;</label>
-            <button class="btn btn-primary" onclick="applyFilters()">
-              🔍 Filtrar
-            </button>
           </div>
         </div>
 
