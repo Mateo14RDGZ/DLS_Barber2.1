@@ -6,136 +6,310 @@
     <title>Registro - DLS BARBER</title>
     <link rel="stylesheet" href="styles.css" />
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #0a0a0a;
+        background-image: 
+          radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+          radial-gradient(circle at 40% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 20px;
+      }
+
       .auth-container {
-        max-width: 400px;
-        margin: 50px auto;
-        padding: 40px;
-        background: rgba(17, 24, 39, 0.95);
-        border-radius: 20px;
-        border: 1px solid rgba(20, 184, 166, 0.3);
+        max-width: 500px;
+        width: 100%;
+        padding: 50px 40px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        border-radius: 25px;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        box-shadow: 
+          0 20px 60px rgba(0, 0, 0, 0.8),
+          0 0 40px rgba(212, 175, 55, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .auth-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, 
+          transparent,
+          #d4af37 20%,
+          #f4e4c1 50%,
+          #d4af37 80%,
+          transparent
+        );
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
       }
 
       .auth-form {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 18px;
       }
 
       .auth-title {
-        font-family: "Montserrat", sans-serif;
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--color-white);
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #d4af37 0%, #f4e4c1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-align: center;
+        margin-bottom: 10px;
+        filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.3));
+        letter-spacing: 1px;
+      }
+
+      .auth-subtitle {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #b8b8b8;
         text-align: center;
         margin-bottom: 30px;
+        letter-spacing: 0.5px;
+      }
+
+      .input-group {
+        position: relative;
       }
 
       .auth-input {
-        padding: 15px;
-        border: 1px solid rgba(20, 184, 166, 0.3);
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--color-white);
-        font-size: 1rem;
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid rgba(212, 175, 55, 0.3);
+        border-radius: 12px;
+        background: rgba(26, 26, 26, 0.8);
+        color: #f4e4c1;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .auth-input::placeholder {
+        color: rgba(184, 184, 184, 0.6);
+      }
+
+      .auth-input:hover {
+        border-color: #d4af37;
+        background: rgba(26, 26, 26, 0.95);
       }
 
       .auth-input:focus {
         outline: none;
-        border-color: var(--color-primary-red);
+        border-color: #d4af37;
+        background: rgba(26, 26, 26, 1);
+        box-shadow: 
+          inset 0 2px 4px rgba(0, 0, 0, 0.3),
+          0 0 0 4px rgba(212, 175, 55, 0.15);
       }
 
       .auth-button {
-        padding: 15px;
-        background: var(--color-primary-red);
-        color: var(--color-white);
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #d4af37, #f4e4c1);
+        color: #1a1a1a;
         border: none;
-        border-radius: 10px;
-        font-size: 1rem;
-        font-weight: 600;
+        border-radius: 12px;
+        font-size: 1.05rem;
+        font-weight: 700;
         cursor: pointer;
-        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 10px;
+        box-shadow: 
+          0 4px 12px rgba(212, 175, 55, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .auth-button::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+      }
+
+      .auth-button:hover::before {
+        width: 300px;
+        height: 300px;
       }
 
       .auth-button:hover {
-        background: var(--color-primary-red-hover);
-        transform: translateY(-2px);
+        transform: translateY(-3px);
+        box-shadow: 
+          0 8px 24px rgba(212, 175, 55, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      }
+
+      .auth-button:active {
+        transform: translateY(-1px);
+      }
+
+      .auth-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
       }
 
       .auth-link {
         text-align: center;
-        color: var(--color-primary-red);
+        color: #d4af37;
         text-decoration: none;
         margin-top: 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: block;
       }
 
       .auth-link:hover {
-        text-decoration: underline;
+        color: #f4e4c1;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
       }
 
       .error-message {
-        color: #ff4444;
+        color: #ff6b6b;
         text-align: center;
-        padding: 10px;
-        background: rgba(255, 68, 68, 0.1);
-        border-radius: 5px;
+        padding: 14px 20px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 12px;
         margin-bottom: 20px;
+        border: 1px solid rgba(255, 107, 107, 0.3);
+        font-weight: 500;
+        animation: shake 0.5s ease;
+      }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
       }
 
       .success-message {
-        color: #44ff44;
+        color: #4ade80;
         text-align: center;
-        padding: 10px;
-        background: rgba(68, 255, 68, 0.1);
-        border-radius: 5px;
+        padding: 14px 20px;
+        background: rgba(74, 222, 128, 0.1);
+        border-radius: 12px;
         margin-bottom: 20px;
+        border: 1px solid rgba(74, 222, 128, 0.3);
+        font-weight: 500;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @media (max-width: 480px) {
+        .auth-container {
+          padding: 40px 30px;
+        }
+
+        .auth-title {
+          font-size: 2rem;
+        }
+
+        .auth-subtitle {
+          font-size: 1.1rem;
+        }
+
+        .auth-input {
+          padding: 12px 16px;
+        }
       }
     </style>
   </head>
   <body>
     <div class="auth-container">
-      <h1 class="auth-title">💈 DLS BARBER</h1>
-      <h2 class="auth-title" style="font-size: 1.5rem; margin-bottom: 20px">
-        Crear Cuenta
-      </h2>
+      <h1 class="auth-title">DLS BARBER</h1>
+      <h2 class="auth-subtitle">Crear Cuenta</h2>
 
       <div id="message-container"></div>
 
       <form id="register-form" class="auth-form">
-        <input
-          type="text"
-          id="username"
-          class="auth-input"
-          placeholder="Nombre de usuario"
-          required
-        />
-        <input
-          type="email"
-          id="email"
-          class="auth-input"
-          placeholder="Email"
-          required
-        />
-        <input
-          type="password"
-          id="password"
-          class="auth-input"
-          placeholder="Contraseña"
-          required
-        />
-        <input
-          type="text"
-          id="full_name"
-          class="auth-input"
-          placeholder="Nombre completo"
-          required
-        />
-        <input
-          type="tel"
-          id="phone"
-          class="auth-input"
-          placeholder="Teléfono"
-          required
-        />
+        <div class="input-group">
+          <input
+            type="text"
+            id="username"
+            class="auth-input"
+            placeholder="Nombre de usuario"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <input
+            type="email"
+            id="email"
+            class="auth-input"
+            placeholder="Correo electrónico"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <input
+            type="password"
+            id="password"
+            class="auth-input"
+            placeholder="Contraseña"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <input
+            type="text"
+            id="full_name"
+            class="auth-input"
+            placeholder="Nombre completo"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <input
+            type="tel"
+            id="phone"
+            class="auth-input"
+            placeholder="Teléfono"
+            required
+          />
+        </div>
         <button type="submit" class="auth-button">Registrarse</button>
       </form>
 
