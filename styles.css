@@ -6,29 +6,29 @@
   --color-primary-gold: #d4af37;
   --color-secondary-gold: #f4e4c1;
   --color-dark-gold: #b8941f;
-  
-  /* Colores de fondo negro */
-  --color-background-primary: #0a0a0a;
-  --color-background-secondary: #1a1a1a;
-  --color-background-tertiary: #2d2d2d;
-  
+
+  /* Colores de fondo gris oscuro premium */
+  --color-background-primary: #1a1a1d;
+  --color-background-secondary: #2a2a2e;
+  --color-background-tertiary: #3a3a3f;
+
   /* Colores de texto */
   --color-text-primary: #f4e4c1;
   --color-text-secondary: #b8b8b8;
   --color-text-tertiary: #e5e7eb;
-  
+
   /* Colores de estado */
   --color-success: #4ade80;
   --color-error: #ff6b6b;
   --color-warning: #fbbf24;
   --color-info: #60a5fa;
-  
+
   /* Colores especiales */
   --color-whatsapp: #25d366;
   --color-instagram-start: #e4405f;
   --color-instagram-end: #833ab4;
   --color-cancelled: #dc143c;
-  
+
   /* Sombras */
   --shadow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
   --shadow-gold-strong: 0 0 40px rgba(212, 175, 55, 0.5);
@@ -45,9 +45,22 @@ body {
   font-family: "Poppins", sans-serif;
   background: var(--color-background-primary);
   background-image: 
-    radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(212, 175, 55, 0.02) 0%, transparent 50%);
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(212, 175, 55, 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(212, 175, 55, 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 20%,
+      rgba(212, 175, 55, 0.05) 0%,
+      transparent 50%
+    ),
+    linear-gradient(135deg, #1a1a1d 0%, #25252a 50%, #1a1a1d 100%);
   color: var(--color-text-tertiary);
   min-height: 100vh;
   overflow-x: hidden;
@@ -137,7 +150,11 @@ body {
 
 /* Header Styles - Diseño Premium */
 header {
-  background: linear-gradient(135deg, var(--color-background-secondary), var(--color-background-tertiary));
+  background: linear-gradient(
+    135deg,
+    var(--color-background-secondary),
+    var(--color-background-tertiary)
+  );
   padding: 40px 20px;
   margin: 20px;
   border-radius: 20px;
@@ -145,8 +162,7 @@ header {
   text-align: center;
   animation: staticGlow 4s ease-in-out infinite;
   backdrop-filter: blur(15px);
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.5),
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
@@ -159,7 +175,8 @@ header::before {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, 
+  background: linear-gradient(
+    90deg,
     transparent,
     var(--color-primary-gold) 20%,
     var(--color-secondary-gold) 50%,
