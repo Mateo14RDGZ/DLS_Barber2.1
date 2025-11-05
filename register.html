@@ -14,15 +14,26 @@
 
       body {
         background: #0a0a0a;
-        background-image: 
-          radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
-          radial-gradient(circle at 40% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+        background-image: radial-gradient(
+            circle at 20% 50%,
+            rgba(212, 175, 55, 0.05) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(212, 175, 55, 0.05) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 20%,
+            rgba(212, 175, 55, 0.03) 0%,
+            transparent 50%
+          );
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         padding: 20px;
       }
 
@@ -33,8 +44,7 @@
         background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         border-radius: 25px;
         border: 1px solid rgba(212, 175, 55, 0.2);
-        box-shadow: 
-          0 20px 60px rgba(0, 0, 0, 0.8),
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8),
           0 0 40px rgba(212, 175, 55, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.1);
         position: relative;
@@ -60,7 +70,8 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, 
+        background: linear-gradient(
+          90deg,
           transparent,
           #d4af37 20%,
           #f4e4c1 50%,
@@ -128,8 +139,7 @@
         outline: none;
         border-color: #d4af37;
         background: rgba(26, 26, 26, 1);
-        box-shadow: 
-          inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3),
           0 0 0 4px rgba(212, 175, 55, 0.15);
       }
 
@@ -145,8 +155,7 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         margin-top: 10px;
-        box-shadow: 
-          0 4px 12px rgba(212, 175, 55, 0.4),
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.3);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
@@ -173,8 +182,7 @@
 
       .auth-button:hover {
         transform: translateY(-3px);
-        box-shadow: 
-          0 8px 24px rgba(212, 175, 55, 0.6),
+        box-shadow: 0 8px 24px rgba(212, 175, 55, 0.6),
           inset 0 1px 0 rgba(255, 255, 255, 0.4);
       }
 
@@ -216,9 +224,16 @@
       }
 
       @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-10px); }
-        75% { transform: translateX(10px); }
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-10px);
+        }
+        75% {
+          transform: translateX(10px);
+        }
       }
 
       .success-message {
@@ -234,8 +249,14 @@
       }
 
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       @media (max-width: 480px) {
@@ -318,6 +339,110 @@
       >
     </div>
 
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
     <script src="auth.js"></script>
+    
+    <script>
+      // Animaciones GSAP profesionales para registro
+      document.addEventListener('DOMContentLoaded', function() {
+        // Animación del contenedor con efecto 3D
+        gsap.from('.auth-container', {
+          duration: 1.2,
+          y: 60,
+          opacity: 0,
+          scale: 0.85,
+          rotationX: 15,
+          transformPerspective: 1000,
+          ease: 'power3.out'
+        });
+
+        // Animación del título con efecto magnético
+        gsap.from('.auth-title', {
+          duration: 1,
+          y: -40,
+          opacity: 0,
+          delay: 0.2,
+          ease: 'elastic.out(1, 0.6)'
+        });
+
+        // Animación de los input groups en cascada con efectos diferentes
+        const inputGroups = document.querySelectorAll('.input-group');
+        inputGroups.forEach((group, index) => {
+          gsap.from(group, {
+            duration: 0.8,
+            x: index % 2 === 0 ? -60 : 60,
+            opacity: 0,
+            rotation: index % 2 === 0 ? -5 : 5,
+            delay: 0.4 + (index * 0.15),
+            ease: 'back.out(1.5)'
+          });
+        });
+
+        // Animación del botón con efecto de aparición dramático
+        gsap.from('.auth-button', {
+          duration: 1,
+          scale: 0,
+          opacity: 0,
+          rotation: 360,
+          delay: 1.3,
+          ease: 'back.out(2)'
+        });
+
+        // Animación del enlace
+        gsap.from('.auth-link', {
+          duration: 0.6,
+          y: 30,
+          opacity: 0,
+          delay: 1.6,
+          ease: 'power2.out'
+        });
+
+        // Efecto hover mejorado en el botón
+        const button = document.querySelector('.auth-button');
+        if (button) {
+          button.addEventListener('mouseenter', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              scale: 1.08,
+              boxShadow: '0 0 40px rgba(212, 175, 55, 0.6), 0 0 80px rgba(212, 175, 55, 0.3)',
+              ease: 'power2.out'
+            });
+          });
+          
+          button.addEventListener('mouseleave', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              scale: 1,
+              boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+              ease: 'power2.out'
+            });
+          });
+        }
+
+        // Animación de inputs al hacer focus con efecto de brillo
+        const inputs = document.querySelectorAll('.auth-input');
+        inputs.forEach(input => {
+          input.addEventListener('focus', function() {
+            gsap.to(this, {
+              duration: 0.4,
+              scale: 1.03,
+              borderColor: '#d4af37',
+              boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+              ease: 'power2.out'
+            });
+          });
+          
+          input.addEventListener('blur', function() {
+            gsap.to(this, {
+              duration: 0.4,
+              scale: 1,
+              ease: 'power2.out'
+            });
+          });
+        });
+      });
+    </script>
   </body>
 </html>

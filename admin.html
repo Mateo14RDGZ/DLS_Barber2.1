@@ -15,14 +15,25 @@
 
       body {
         background: #0a0a0a;
-        background-image: 
-          radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
-          radial-gradient(circle at 40% 20%, rgba(212, 175, 55, 0.02) 0%, transparent 50%);
+        background-image: radial-gradient(
+            circle at 20% 50%,
+            rgba(212, 175, 55, 0.03) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(212, 175, 55, 0.03) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 20%,
+            rgba(212, 175, 55, 0.02) 0%,
+            transparent 50%
+          );
         min-height: 100vh;
         margin: 0;
         padding: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
 
       .admin-container {
@@ -36,8 +47,7 @@
         padding: 40px;
         border-radius: 20px;
         margin-bottom: 40px;
-        box-shadow: 
-          0 10px 40px rgba(0, 0, 0, 0.5),
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
           0 0 0 1px rgba(212, 175, 55, 0.2),
           inset 0 1px 0 rgba(255, 255, 255, 0.1);
         position: relative;
@@ -55,7 +65,8 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, 
+        background: linear-gradient(
+          90deg,
           transparent,
           #d4af37 20%,
           #f4e4c1 50%,
@@ -73,7 +84,8 @@
         transform: translateX(-50%);
         width: 80%;
         height: 1px;
-        background: linear-gradient(90deg, 
+        background: linear-gradient(
+          90deg,
           transparent,
           rgba(212, 175, 55, 0.3) 50%,
           transparent
@@ -89,8 +101,7 @@
         color: #d4af37;
         margin: 0 0 8px 0;
         font-size: 2.5rem;
-        text-shadow: 
-          0 0 30px rgba(212, 175, 55, 0.3),
+        text-shadow: 0 0 30px rgba(212, 175, 55, 0.3),
           2px 2px 4px rgba(0, 0, 0, 0.8);
         font-weight: 700;
         text-align: left;
@@ -119,8 +130,7 @@
         border-radius: 20px;
         border: 1px solid rgba(212, 175, 55, 0.2);
         text-align: center;
-        box-shadow: 
-          0 8px 32px rgba(0, 0, 0, 0.4),
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.1);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
@@ -146,8 +156,7 @@
       .stat-card:hover {
         border-color: #d4af37;
         transform: translateY(-8px) scale(1.02);
-        box-shadow: 
-          0 20px 60px rgba(0, 0, 0, 0.6),
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6),
           0 0 40px rgba(212, 175, 55, 0.2),
           inset 0 1px 0 rgba(255, 255, 255, 0.15);
       }
@@ -250,8 +259,7 @@
         border-radius: 20px;
         width: 90%;
         max-width: 600px;
-        box-shadow: 
-          0 20px 60px rgba(0, 0, 0, 0.8),
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8),
           0 0 40px rgba(212, 175, 55, 0.2),
           inset 0 1px 0 rgba(255, 255, 255, 0.1);
         position: relative;
@@ -333,8 +341,7 @@
         padding: 35px;
         border-radius: 20px;
         border: 1px solid rgba(212, 175, 55, 0.2);
-        box-shadow: 
-          0 10px 40px rgba(0, 0, 0, 0.5),
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
           inset 0 1px 0 rgba(255, 255, 255, 0.1);
         position: relative;
         overflow: hidden;
@@ -347,7 +354,8 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, 
+        background: linear-gradient(
+          90deg,
           transparent,
           #d4af37 20%,
           #f4e4c1 50%,
@@ -417,8 +425,7 @@
         border-color: #d4af37;
         outline: none;
         background: rgba(26, 26, 26, 1);
-        box-shadow: 
-          inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3),
           0 0 0 4px rgba(212, 175, 55, 0.15);
       }
 
@@ -447,7 +454,11 @@
       }
 
       .table th {
-        background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+        background: linear-gradient(
+          135deg,
+          rgba(212, 175, 55, 0.2),
+          rgba(212, 175, 55, 0.1)
+        );
         color: #f4e4c1;
         font-weight: 700;
         text-transform: uppercase;
@@ -494,8 +505,7 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
-        box-shadow: 
-          0 4px 12px rgba(0, 0, 0, 0.3),
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
           inset 0 1px 0 rgba(255, 255, 255, 0.2);
         display: inline-block;
         position: relative;
@@ -509,7 +519,12 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
         transition: left 0.5s ease;
       }
 
@@ -520,24 +535,21 @@
       .status-pending {
         background: linear-gradient(135deg, #fbbf24, #f59e0b);
         color: #1a1a1a;
-        box-shadow: 
-          0 4px 12px rgba(251, 191, 36, 0.4),
+        box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.3);
       }
 
       .status-confirmed {
         background: linear-gradient(135deg, #d4af37, #f4e4c1);
         color: #1a1a1a;
-        box-shadow: 
-          0 4px 12px rgba(212, 175, 55, 0.4),
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.3);
       }
 
       .status-cancelled {
         background: linear-gradient(135deg, #8b0000, #dc143c);
         color: white;
-        box-shadow: 
-          0 4px 12px rgba(220, 20, 60, 0.4),
+        box-shadow: 0 4px 12px rgba(220, 20, 60, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
 
@@ -633,8 +645,7 @@
         cursor: pointer;
         font-weight: 700;
         font-size: 0.95rem;
-        box-shadow: 
-          0 4px 12px rgba(212, 175, 55, 0.4),
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.3);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         letter-spacing: 1px;
@@ -665,8 +676,7 @@
 
       .logout-btn:hover {
         transform: translateY(-3px);
-        box-shadow: 
-          0 8px 24px rgba(212, 175, 55, 0.6),
+        box-shadow: 0 8px 24px rgba(212, 175, 55, 0.6),
           inset 0 1px 0 rgba(255, 255, 255, 0.4);
       }
 
@@ -685,7 +695,8 @@
       }
 
       @keyframes pulse {
-        0%, 100% {
+        0%,
+        100% {
           opacity: 1;
         }
         50% {
@@ -882,5 +893,236 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="auth.js"></script>
     <script src="admin.js"></script>
+    
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <script>
+      // Registrar plugin de ScrollTrigger
+      gsap.registerPlugin(ScrollTrigger);
+      
+      // Animaciones GSAP profesionales para admin panel
+      document.addEventListener('DOMContentLoaded', function() {
+        // Animación del header del admin
+        gsap.from('.admin-header', {
+          duration: 1,
+          y: -80,
+          opacity: 0,
+          ease: 'power3.out'
+        });
+
+        // Animación del título con efecto premium
+        gsap.from('.admin-header h1', {
+          duration: 1.2,
+          x: -50,
+          opacity: 0,
+          delay: 0.3,
+          ease: 'elastic.out(1, 0.6)'
+        });
+
+        // Animación del botón de cerrar sesión
+        gsap.from('.logout-btn', {
+          duration: 0.8,
+          scale: 0,
+          rotation: 360,
+          delay: 0.5,
+          ease: 'back.out(2.5)'
+        });
+
+        // Animación de las tarjetas de estadísticas
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+          gsap.from(card, {
+            duration: 0.8,
+            y: 60,
+            opacity: 0,
+            scale: 0.8,
+            rotation: index % 2 === 0 ? -10 : 10,
+            delay: 0.6 + (index * 0.15),
+            ease: 'back.out(1.7)'
+          });
+          
+          // Efecto hover en stat cards
+          card.addEventListener('mouseenter', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              y: -10,
+              scale: 1.05,
+              boxShadow: '0 20px 50px rgba(212, 175, 55, 0.4), 0 0 40px rgba(212, 175, 55, 0.2)',
+              ease: 'power2.out'
+            });
+          });
+          
+          card.addEventListener('mouseleave', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              y: 0,
+              scale: 1,
+              ease: 'power2.out'
+            });
+          });
+        });
+
+        // Animación de los filtros
+        gsap.from('.filters-section', {
+          duration: 1,
+          x: -100,
+          opacity: 0,
+          delay: 1.2,
+          ease: 'power3.out'
+        });
+
+        // Animación de cada filtro individual
+        const filters = document.querySelectorAll('.filter-group');
+        filters.forEach((filter, index) => {
+          gsap.from(filter, {
+            duration: 0.6,
+            x: -50,
+            opacity: 0,
+            delay: 1.4 + (index * 0.1),
+            ease: 'back.out(1.5)'
+          });
+        });
+
+        // Animación de la tabla
+        gsap.from('.reservations-table', {
+          scrollTrigger: {
+            trigger: '.reservations-table',
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          },
+          duration: 1,
+          y: 80,
+          opacity: 0,
+          ease: 'power3.out'
+        });
+
+        // Animación de las filas de la tabla en cascada
+        const tableRows = document.querySelectorAll('.reservations-table tbody tr');
+        tableRows.forEach((row, index) => {
+          gsap.from(row, {
+            scrollTrigger: {
+              trigger: row,
+              start: 'top 90%',
+              toggleActions: 'play none none reverse'
+            },
+            duration: 0.6,
+            x: -50,
+            opacity: 0,
+            delay: index * 0.05,
+            ease: 'power2.out'
+          });
+          
+          // Efecto hover en filas
+          row.addEventListener('mouseenter', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              backgroundColor: 'rgba(212, 175, 55, 0.1)',
+              scale: 1.01,
+              ease: 'power2.out'
+            });
+          });
+          
+          row.addEventListener('mouseleave', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              backgroundColor: 'transparent',
+              scale: 1,
+              ease: 'power2.out'
+            });
+          });
+        });
+
+        // Animación de los botones de acción
+        const actionButtons = document.querySelectorAll('.action-btn');
+        actionButtons.forEach(button => {
+          button.addEventListener('mouseenter', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              scale: 1.15,
+              rotation: 5,
+              ease: 'back.out(2)'
+            });
+          });
+          
+          button.addEventListener('mouseleave', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              scale: 1,
+              rotation: 0,
+              ease: 'power2.out'
+            });
+          });
+        });
+
+        // Animación de los badges de estado con pulso
+        const statusBadges = document.querySelectorAll('.status-badge');
+        statusBadges.forEach(badge => {
+          // Pulso continuo suave
+          gsap.to(badge, {
+            duration: 2,
+            scale: 1.05,
+            opacity: 0.9,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+          });
+        });
+
+        // Animación del modal cuando se abre
+        const modal = document.getElementById('editModal');
+        if (modal) {
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.attributeName === 'style') {
+                if (modal.style.display === 'flex') {
+                  gsap.from('.modal-content', {
+                    duration: 0.5,
+                    scale: 0.5,
+                    opacity: 0,
+                    rotation: 10,
+                    ease: 'back.out(1.7)'
+                  });
+                }
+              }
+            });
+          });
+          
+          observer.observe(modal, { attributes: true });
+        }
+
+        // Animación de los selects al hacer click
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+          select.addEventListener('focus', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              scale: 1.02,
+              borderColor: '#d4af37',
+              boxShadow: '0 0 15px rgba(212, 175, 55, 0.3)',
+              ease: 'power2.out'
+            });
+          });
+          
+          select.addEventListener('blur', function() {
+            gsap.to(this, {
+              duration: 0.3,
+              scale: 1,
+              ease: 'power2.out'
+            });
+          });
+        });
+
+        // Efecto especial para el logo/título del admin
+        gsap.to('.admin-header h1', {
+          duration: 3,
+          textShadow: '0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.4)',
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut'
+        });
+      });
+    </script>
   </body>
 </html>
