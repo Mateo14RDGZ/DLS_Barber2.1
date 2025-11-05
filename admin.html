@@ -893,172 +893,225 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="auth.js"></script>
     <script src="admin.js"></script>
-    
+
     <!-- GSAP Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    
+
     <script>
       // Registrar plugin de ScrollTrigger
       gsap.registerPlugin(ScrollTrigger);
-      
+
       // Animaciones GSAP profesionales para admin panel
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener("DOMContentLoaded", function () {
         // Animación del header del admin
-        gsap.from('.admin-header', {
-          duration: 1,
-          y: -80,
-          opacity: 0,
-          ease: 'power3.out'
-        });
+        gsap.fromTo(".admin-header", 
+          {
+            y: -80,
+            opacity: 0
+          },
+          {
+            duration: 1,
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+          }
+        );
 
         // Animación del título con efecto premium
-        gsap.from('.admin-header h1', {
-          duration: 1.2,
-          x: -50,
-          opacity: 0,
-          delay: 0.3,
-          ease: 'elastic.out(1, 0.6)'
-        });
+        gsap.fromTo(".admin-header h1", 
+          {
+            x: -50,
+            opacity: 0
+          },
+          {
+            duration: 1.2,
+            x: 0,
+            opacity: 1,
+            delay: 0.3,
+            ease: "elastic.out(1, 0.6)",
+          }
+        );
 
         // Animación del botón de cerrar sesión
-        gsap.from('.logout-btn', {
-          duration: 0.8,
-          scale: 0,
-          rotation: 360,
-          delay: 0.5,
-          ease: 'back.out(2.5)'
-        });
+        gsap.fromTo(".logout-btn", 
+          {
+            scale: 0,
+            rotation: 360
+          },
+          {
+            duration: 0.8,
+            scale: 1,
+            rotation: 0,
+            delay: 0.5,
+            ease: "back.out(2.5)",
+          }
+        );
 
         // Animación de las tarjetas de estadísticas
-        const statCards = document.querySelectorAll('.stat-card');
+        const statCards = document.querySelectorAll(".stat-card");
         statCards.forEach((card, index) => {
-          gsap.from(card, {
-            duration: 0.8,
-            y: 60,
-            opacity: 0,
-            scale: 0.8,
-            rotation: index % 2 === 0 ? -10 : 10,
-            delay: 0.6 + (index * 0.15),
-            ease: 'back.out(1.7)'
-          });
-          
+          gsap.fromTo(card, 
+            {
+              y: 60,
+              opacity: 0,
+              scale: 0.8,
+              rotation: index % 2 === 0 ? -10 : 10
+            },
+            {
+              duration: 0.8,
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              rotation: 0,
+              delay: 0.6 + index * 0.15,
+              ease: "back.out(1.7)",
+            }
+          );
+
           // Efecto hover en stat cards
-          card.addEventListener('mouseenter', function() {
+          card.addEventListener("mouseenter", function () {
             gsap.to(this, {
               duration: 0.3,
               y: -10,
               scale: 1.05,
-              boxShadow: '0 20px 50px rgba(212, 175, 55, 0.4), 0 0 40px rgba(212, 175, 55, 0.2)',
-              ease: 'power2.out'
+              boxShadow:
+                "0 20px 50px rgba(212, 175, 55, 0.4), 0 0 40px rgba(212, 175, 55, 0.2)",
+              ease: "power2.out",
             });
           });
-          
-          card.addEventListener('mouseleave', function() {
+
+          card.addEventListener("mouseleave", function () {
             gsap.to(this, {
               duration: 0.3,
               y: 0,
               scale: 1,
-              ease: 'power2.out'
+              ease: "power2.out",
             });
           });
         });
 
         // Animación de los filtros
-        gsap.from('.filters-section', {
-          duration: 1,
-          x: -100,
-          opacity: 0,
-          delay: 1.2,
-          ease: 'power3.out'
-        });
+        gsap.fromTo(".filters-section", 
+          {
+            x: -100,
+            opacity: 0
+          },
+          {
+            duration: 1,
+            x: 0,
+            opacity: 1,
+            delay: 1.2,
+            ease: "power3.out",
+          }
+        );
 
         // Animación de cada filtro individual
-        const filters = document.querySelectorAll('.filter-group');
+        const filters = document.querySelectorAll(".filter-group");
         filters.forEach((filter, index) => {
-          gsap.from(filter, {
-            duration: 0.6,
-            x: -50,
-            opacity: 0,
-            delay: 1.4 + (index * 0.1),
-            ease: 'back.out(1.5)'
-          });
+          gsap.fromTo(filter, 
+            {
+              x: -50,
+              opacity: 0
+            },
+            {
+              duration: 0.6,
+              x: 0,
+              opacity: 1,
+              delay: 1.4 + index * 0.1,
+              ease: "back.out(1.5)",
+            }
+          );
         });
 
         // Animación de la tabla
-        gsap.from('.reservations-table', {
-          scrollTrigger: {
-            trigger: '.reservations-table',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
+        gsap.fromTo(".reservations-table", 
+          {
+            y: 80,
+            opacity: 0
           },
-          duration: 1,
-          y: 80,
-          opacity: 0,
-          ease: 'power3.out'
-        });
+          {
+            scrollTrigger: {
+              trigger: ".reservations-table",
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+            duration: 1,
+            y: 0,
+            opacity: 1,
+            ease: "power3.out",
+          }
+        );
 
         // Animación de las filas de la tabla en cascada
-        const tableRows = document.querySelectorAll('.reservations-table tbody tr');
+        const tableRows = document.querySelectorAll(
+          ".reservations-table tbody tr"
+        );
         tableRows.forEach((row, index) => {
-          gsap.from(row, {
-            scrollTrigger: {
-              trigger: row,
-              start: 'top 90%',
-              toggleActions: 'play none none reverse'
+          gsap.fromTo(row, 
+            {
+              x: -50,
+              opacity: 0
             },
-            duration: 0.6,
-            x: -50,
-            opacity: 0,
-            delay: index * 0.05,
-            ease: 'power2.out'
-          });
-          
+            {
+              scrollTrigger: {
+                trigger: row,
+                start: "top 90%",
+                toggleActions: "play none none reverse",
+              },
+              duration: 0.6,
+              x: 0,
+              opacity: 1,
+              delay: index * 0.05,
+              ease: "power2.out",
+            }
+          );
+
           // Efecto hover en filas
-          row.addEventListener('mouseenter', function() {
+          row.addEventListener("mouseenter", function () {
             gsap.to(this, {
               duration: 0.3,
-              backgroundColor: 'rgba(212, 175, 55, 0.1)',
+              backgroundColor: "rgba(212, 175, 55, 0.1)",
               scale: 1.01,
-              ease: 'power2.out'
+              ease: "power2.out",
             });
           });
-          
-          row.addEventListener('mouseleave', function() {
+
+          row.addEventListener("mouseleave", function () {
             gsap.to(this, {
               duration: 0.3,
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
               scale: 1,
-              ease: 'power2.out'
+              ease: "power2.out",
             });
           });
         });
 
         // Animación de los botones de acción
-        const actionButtons = document.querySelectorAll('.action-btn');
-        actionButtons.forEach(button => {
-          button.addEventListener('mouseenter', function() {
+        const actionButtons = document.querySelectorAll(".action-btn");
+        actionButtons.forEach((button) => {
+          button.addEventListener("mouseenter", function () {
             gsap.to(this, {
               duration: 0.3,
               scale: 1.15,
               rotation: 5,
-              ease: 'back.out(2)'
+              ease: "back.out(2)",
             });
           });
-          
-          button.addEventListener('mouseleave', function() {
+
+          button.addEventListener("mouseleave", function () {
             gsap.to(this, {
               duration: 0.3,
               scale: 1,
               rotation: 0,
-              ease: 'power2.out'
+              ease: "power2.out",
             });
           });
         });
 
         // Animación de los badges de estado con pulso
-        const statusBadges = document.querySelectorAll('.status-badge');
-        statusBadges.forEach(badge => {
+        const statusBadges = document.querySelectorAll(".status-badge");
+        statusBadges.forEach((badge) => {
           // Pulso continuo suave
           gsap.to(badge, {
             duration: 2,
@@ -1066,61 +1119,62 @@
             opacity: 0.9,
             repeat: -1,
             yoyo: true,
-            ease: 'sine.inOut'
+            ease: "sine.inOut",
           });
         });
 
         // Animación del modal cuando se abre
-        const modal = document.getElementById('editModal');
+        const modal = document.getElementById("editModal");
         if (modal) {
-          const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-              if (mutation.attributeName === 'style') {
-                if (modal.style.display === 'flex') {
-                  gsap.from('.modal-content', {
+          const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+              if (mutation.attributeName === "style") {
+                if (modal.style.display === "flex") {
+                  gsap.from(".modal-content", {
                     duration: 0.5,
                     scale: 0.5,
                     opacity: 0,
                     rotation: 10,
-                    ease: 'back.out(1.7)'
+                    ease: "back.out(1.7)",
                   });
                 }
               }
             });
           });
-          
+
           observer.observe(modal, { attributes: true });
         }
 
         // Animación de los selects al hacer click
-        const selects = document.querySelectorAll('select');
-        selects.forEach(select => {
-          select.addEventListener('focus', function() {
+        const selects = document.querySelectorAll("select");
+        selects.forEach((select) => {
+          select.addEventListener("focus", function () {
             gsap.to(this, {
               duration: 0.3,
               scale: 1.02,
-              borderColor: '#d4af37',
-              boxShadow: '0 0 15px rgba(212, 175, 55, 0.3)',
-              ease: 'power2.out'
+              borderColor: "#d4af37",
+              boxShadow: "0 0 15px rgba(212, 175, 55, 0.3)",
+              ease: "power2.out",
             });
           });
-          
-          select.addEventListener('blur', function() {
+
+          select.addEventListener("blur", function () {
             gsap.to(this, {
               duration: 0.3,
               scale: 1,
-              ease: 'power2.out'
+              ease: "power2.out",
             });
           });
         });
 
         // Efecto especial para el logo/título del admin
-        gsap.to('.admin-header h1', {
+        gsap.to(".admin-header h1", {
           duration: 3,
-          textShadow: '0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.4)',
+          textShadow:
+            "0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.4)",
           repeat: -1,
           yoyo: true,
-          ease: 'sine.inOut'
+          ease: "sine.inOut",
         });
       });
     </script>

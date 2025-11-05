@@ -341,104 +341,139 @@
 
     <!-- GSAP Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    
+
     <script src="auth.js"></script>
-    
+
     <script>
       // Animaciones GSAP profesionales para registro
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener("DOMContentLoaded", function () {
         // Animación del contenedor con efecto 3D
-        gsap.from('.auth-container', {
-          duration: 1.2,
-          y: 60,
-          opacity: 0,
-          scale: 0.85,
-          rotationX: 15,
-          transformPerspective: 1000,
-          ease: 'power3.out'
-        });
+        gsap.fromTo(".auth-container", 
+          {
+            y: 60,
+            opacity: 0,
+            scale: 0.85,
+            rotationX: 15,
+            transformPerspective: 1000
+          },
+          {
+            duration: 1.2,
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            rotationX: 0,
+            ease: "power3.out",
+          }
+        );
 
         // Animación del título con efecto magnético
-        gsap.from('.auth-title', {
-          duration: 1,
-          y: -40,
-          opacity: 0,
-          delay: 0.2,
-          ease: 'elastic.out(1, 0.6)'
-        });
+        gsap.fromTo(".auth-title", 
+          {
+            y: -40,
+            opacity: 0
+          },
+          {
+            duration: 1,
+            y: 0,
+            opacity: 1,
+            delay: 0.2,
+            ease: "elastic.out(1, 0.6)",
+          }
+        );
 
         // Animación de los input groups en cascada con efectos diferentes
-        const inputGroups = document.querySelectorAll('.input-group');
+        const inputGroups = document.querySelectorAll(".input-group");
         inputGroups.forEach((group, index) => {
-          gsap.from(group, {
-            duration: 0.8,
-            x: index % 2 === 0 ? -60 : 60,
-            opacity: 0,
-            rotation: index % 2 === 0 ? -5 : 5,
-            delay: 0.4 + (index * 0.15),
-            ease: 'back.out(1.5)'
-          });
+          gsap.fromTo(group, 
+            {
+              x: index % 2 === 0 ? -60 : 60,
+              opacity: 0,
+              rotation: index % 2 === 0 ? -5 : 5
+            },
+            {
+              duration: 0.8,
+              x: 0,
+              opacity: 1,
+              rotation: 0,
+              delay: 0.4 + index * 0.15,
+              ease: "back.out(1.5)",
+            }
+          );
         });
 
         // Animación del botón con efecto de aparición dramático
-        gsap.from('.auth-button', {
-          duration: 1,
-          scale: 0,
-          opacity: 0,
-          rotation: 360,
-          delay: 1.3,
-          ease: 'back.out(2)'
-        });
+        gsap.fromTo(".auth-button", 
+          {
+            scale: 0,
+            opacity: 0,
+            rotation: 360
+          },
+          {
+            duration: 1,
+            scale: 1,
+            opacity: 1,
+            rotation: 0,
+            delay: 1.3,
+            ease: "back.out(2)",
+          }
+        );
 
         // Animación del enlace
-        gsap.from('.auth-link', {
-          duration: 0.6,
-          y: 30,
-          opacity: 0,
-          delay: 1.6,
-          ease: 'power2.out'
-        });
+        gsap.fromTo(".auth-link", 
+          {
+            y: 30,
+            opacity: 0
+          },
+          {
+            duration: 0.6,
+            y: 0,
+            opacity: 1,
+            delay: 1.6,
+            ease: "power2.out",
+          }
+        );
 
         // Efecto hover mejorado en el botón
-        const button = document.querySelector('.auth-button');
+        const button = document.querySelector(".auth-button");
         if (button) {
-          button.addEventListener('mouseenter', function() {
+          button.addEventListener("mouseenter", function () {
             gsap.to(this, {
               duration: 0.3,
               scale: 1.08,
-              boxShadow: '0 0 40px rgba(212, 175, 55, 0.6), 0 0 80px rgba(212, 175, 55, 0.3)',
-              ease: 'power2.out'
+              boxShadow:
+                "0 0 40px rgba(212, 175, 55, 0.6), 0 0 80px rgba(212, 175, 55, 0.3)",
+              ease: "power2.out",
             });
           });
-          
-          button.addEventListener('mouseleave', function() {
+
+          button.addEventListener("mouseleave", function () {
             gsap.to(this, {
               duration: 0.3,
               scale: 1,
-              boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
-              ease: 'power2.out'
+              boxShadow: "0 8px 20px rgba(212, 175, 55, 0.3)",
+              ease: "power2.out",
             });
           });
         }
 
         // Animación de inputs al hacer focus con efecto de brillo
-        const inputs = document.querySelectorAll('.auth-input');
-        inputs.forEach(input => {
-          input.addEventListener('focus', function() {
+        const inputs = document.querySelectorAll(".auth-input");
+        inputs.forEach((input) => {
+          input.addEventListener("focus", function () {
             gsap.to(this, {
               duration: 0.4,
               scale: 1.03,
-              borderColor: '#d4af37',
-              boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
-              ease: 'power2.out'
+              borderColor: "#d4af37",
+              boxShadow: "0 0 20px rgba(212, 175, 55, 0.4)",
+              ease: "power2.out",
             });
           });
-          
-          input.addEventListener('blur', function() {
+
+          input.addEventListener("blur", function () {
             gsap.to(this, {
               duration: 0.4,
               scale: 1,
-              ease: 'power2.out'
+              ease: "power2.out",
             });
           });
         });
