@@ -1328,13 +1328,14 @@ h6 {
 .footer {
   background: linear-gradient(
     135deg,
-    var(--color-black) 0%,
-    var(--color-dark-gray) 100%
+    var(--color-background-secondary) 0%,
+    var(--color-background-tertiary) 100%
   );
   margin-top: 60px;
   border-top: 3px solid var(--color-primary-gold);
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(212, 175, 55, 0.1);
 }
 
 .footer::before {
