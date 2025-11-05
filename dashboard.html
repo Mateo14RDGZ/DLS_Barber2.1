@@ -929,10 +929,11 @@
       // Animaciones GSAP profesionales para dashboard
       document.addEventListener("DOMContentLoaded", function () {
         // Animación del header con efecto de deslizamiento
-        gsap.fromTo(".dashboard-header", 
+        gsap.fromTo(
+          ".dashboard-header",
           {
             y: -100,
-            opacity: 0
+            opacity: 0,
           },
           {
             duration: 1,
@@ -943,10 +944,11 @@
         );
 
         // Animación del título con efecto de typing
-        gsap.fromTo(".dashboard-header h1", 
+        gsap.fromTo(
+          ".dashboard-header h1",
           {
             opacity: 0,
-            scale: 0.8
+            scale: 0.8,
           },
           {
             duration: 1.2,
@@ -958,10 +960,11 @@
         );
 
         // Animación de los botones del header en cascada
-        gsap.fromTo(".dashboard-header button", 
+        gsap.fromTo(
+          ".dashboard-header button",
           {
             x: 50,
-            opacity: 0
+            opacity: 0,
           },
           {
             duration: 0.8,
@@ -974,10 +977,11 @@
         );
 
         // Animación del botón "Nueva Reserva" con efecto especial
-        gsap.fromTo(".new-reservation-btn", 
+        gsap.fromTo(
+          ".new-reservation-btn",
           {
             scale: 0,
-            rotation: 360
+            rotation: 360,
           },
           {
             duration: 1,
@@ -991,12 +995,13 @@
         // Animación de las tarjetas de reserva con ScrollTrigger
         const reservationCards = document.querySelectorAll(".reservation-card");
         reservationCards.forEach((card, index) => {
-          gsap.fromTo(card, 
+          gsap.fromTo(
+            card,
             {
               y: 80,
               opacity: 0,
               scale: 0.9,
-              rotation: index % 2 === 0 ? -5 : 5
+              rotation: index % 2 === 0 ? -5 : 5,
             },
             {
               scrollTrigger: {
@@ -1016,10 +1021,11 @@
         });
 
         // Animación del footer con scroll
-        gsap.fromTo(".footer", 
+        gsap.fromTo(
+          ".footer",
           {
             y: 100,
-            opacity: 0
+            opacity: 0,
           },
           {
             scrollTrigger: {
@@ -1035,10 +1041,11 @@
         );
 
         // Animación de las secciones del footer en cascada
-        gsap.fromTo(".footer-section", 
+        gsap.fromTo(
+          ".footer-section",
           {
             y: 50,
-            opacity: 0
+            opacity: 0,
           },
           {
             scrollTrigger: {
@@ -1104,10 +1111,11 @@
         // Animación de los enlaces sociales
         const socialLinks = document.querySelectorAll(".social-link");
         socialLinks.forEach((link, index) => {
-          gsap.fromTo(link, 
+          gsap.fromTo(
+            link,
             {
               scale: 0,
-              rotation: 360
+              rotation: 360,
             },
             {
               scrollTrigger: {
@@ -1152,6 +1160,38 @@
             yoyo: true,
             ease: "power1.inOut",
           });
+        });
+
+        // Efecto Ripple profesional en todos los botones
+        function createRipple(event) {
+          const button = event.currentTarget;
+          
+          // Evitar que se agregue ripple si el botón está deshabilitado
+          if (button.disabled) return;
+          
+          const ripple = document.createElement("span");
+          const diameter = Math.max(button.clientWidth, button.clientHeight);
+          const radius = diameter / 2;
+
+          ripple.style.width = ripple.style.height = `${diameter}px`;
+          ripple.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+          ripple.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+          ripple.classList.add("ripple");
+
+          const rippleElement = button.getElementsByClassName("ripple")[0];
+          if (rippleElement) {
+            rippleElement.remove();
+          }
+
+          button.appendChild(ripple);
+        }
+
+        // Aplicar efecto ripple a todos los botones del dashboard
+        const allButtons = document.querySelectorAll("button");
+        allButtons.forEach((btn) => {
+          btn.style.position = "relative";
+          btn.style.overflow = "hidden";
+          btn.addEventListener("click", createRipple);
         });
       });
     </script>

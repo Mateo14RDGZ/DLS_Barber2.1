@@ -162,6 +162,23 @@
         overflow: hidden;
       }
 
+      /* Efecto Ripple al hacer click */
+      .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        transform: scale(0);
+        animation: ripple-animation 0.6s ease-out;
+        pointer-events: none;
+      }
+
+      @keyframes ripple-animation {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+
       .auth-button::before {
         content: "";
         position: absolute;
@@ -181,13 +198,15 @@
       }
 
       .auth-button:hover {
-        transform: translateY(-3px);
+        transform: translateY(-3px) scale(1.02);
         box-shadow: 0 8px 24px rgba(212, 175, 55, 0.6),
           inset 0 1px 0 rgba(255, 255, 255, 0.4);
       }
 
       .auth-button:active {
-        transform: translateY(-1px);
+        transform: translateY(0) scale(0.98);
+        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4),
+          inset 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       .auth-button:disabled {
@@ -348,13 +367,14 @@
       // Animaciones GSAP profesionales para registro
       document.addEventListener("DOMContentLoaded", function () {
         // Animación del contenedor con efecto 3D
-        gsap.fromTo(".auth-container", 
+        gsap.fromTo(
+          ".auth-container",
           {
             y: 60,
             opacity: 0,
             scale: 0.85,
             rotationX: 15,
-            transformPerspective: 1000
+            transformPerspective: 1000,
           },
           {
             duration: 1.2,
@@ -367,10 +387,11 @@
         );
 
         // Animación del título con efecto magnético
-        gsap.fromTo(".auth-title", 
+        gsap.fromTo(
+          ".auth-title",
           {
             y: -40,
-            opacity: 0
+            opacity: 0,
           },
           {
             duration: 1,
@@ -384,11 +405,12 @@
         // Animación de los input groups en cascada con efectos diferentes
         const inputGroups = document.querySelectorAll(".input-group");
         inputGroups.forEach((group, index) => {
-          gsap.fromTo(group, 
+          gsap.fromTo(
+            group,
             {
               x: index % 2 === 0 ? -60 : 60,
               opacity: 0,
-              rotation: index % 2 === 0 ? -5 : 5
+              rotation: index % 2 === 0 ? -5 : 5,
             },
             {
               duration: 0.8,
@@ -402,11 +424,12 @@
         });
 
         // Animación del botón con efecto de aparición dramático
-        gsap.fromTo(".auth-button", 
+        gsap.fromTo(
+          ".auth-button",
           {
             scale: 0,
             opacity: 0,
-            rotation: 360
+            rotation: 360,
           },
           {
             duration: 1,
@@ -419,10 +442,11 @@
         );
 
         // Animación del enlace
-        gsap.fromTo(".auth-link", 
+        gsap.fromTo(
+          ".auth-link",
           {
             y: 30,
-            opacity: 0
+            opacity: 0,
           },
           {
             duration: 0.6,
@@ -476,6 +500,32 @@
               ease: "power2.out",
             });
           });
+        });
+
+        // Efecto Ripple profesional en botones
+        function createRipple(event) {
+          const button = event.currentTarget;
+          const ripple = document.createElement("span");
+          const diameter = Math.max(button.clientWidth, button.clientHeight);
+          const radius = diameter / 2;
+
+          ripple.style.width = ripple.style.height = `${diameter}px`;
+          ripple.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+          ripple.style.top = `${event.clientY - button.offsetTop - radius}px`;
+          ripple.classList.add("ripple");
+
+          const rippleElement = button.getElementsByClassName("ripple")[0];
+          if (rippleElement) {
+            rippleElement.remove();
+          }
+
+          button.appendChild(ripple);
+        }
+
+        // Aplicar efecto ripple a todos los botones
+        const buttons = document.querySelectorAll(".auth-button");
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", createRipple);
         });
       });
     </script>

@@ -44,8 +44,7 @@
 body {
   font-family: "Poppins", sans-serif;
   background: var(--color-background-primary);
-  background-image: 
-    radial-gradient(
+  background-image: radial-gradient(
       circle at 20% 50%,
       rgba(212, 175, 55, 0.08) 0%,
       transparent 50%
@@ -67,6 +66,23 @@ body {
 }
 
 /* Animaciones Premium */
+/* Efecto Ripple para botones */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: ripple-animation 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
 @keyframes staticGlow {
   0%,
   100% {

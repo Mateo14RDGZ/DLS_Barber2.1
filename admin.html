@@ -905,10 +905,11 @@
       // Animaciones GSAP profesionales para admin panel
       document.addEventListener("DOMContentLoaded", function () {
         // Animación del header del admin
-        gsap.fromTo(".admin-header", 
+        gsap.fromTo(
+          ".admin-header",
           {
             y: -80,
-            opacity: 0
+            opacity: 0,
           },
           {
             duration: 1,
@@ -919,10 +920,11 @@
         );
 
         // Animación del título con efecto premium
-        gsap.fromTo(".admin-header h1", 
+        gsap.fromTo(
+          ".admin-header h1",
           {
             x: -50,
-            opacity: 0
+            opacity: 0,
           },
           {
             duration: 1.2,
@@ -934,10 +936,11 @@
         );
 
         // Animación del botón de cerrar sesión
-        gsap.fromTo(".logout-btn", 
+        gsap.fromTo(
+          ".logout-btn",
           {
             scale: 0,
-            rotation: 360
+            rotation: 360,
           },
           {
             duration: 0.8,
@@ -951,12 +954,13 @@
         // Animación de las tarjetas de estadísticas
         const statCards = document.querySelectorAll(".stat-card");
         statCards.forEach((card, index) => {
-          gsap.fromTo(card, 
+          gsap.fromTo(
+            card,
             {
               y: 60,
               opacity: 0,
               scale: 0.8,
-              rotation: index % 2 === 0 ? -10 : 10
+              rotation: index % 2 === 0 ? -10 : 10,
             },
             {
               duration: 0.8,
@@ -992,10 +996,11 @@
         });
 
         // Animación de los filtros
-        gsap.fromTo(".filters-section", 
+        gsap.fromTo(
+          ".filters-section",
           {
             x: -100,
-            opacity: 0
+            opacity: 0,
           },
           {
             duration: 1,
@@ -1009,10 +1014,11 @@
         // Animación de cada filtro individual
         const filters = document.querySelectorAll(".filter-group");
         filters.forEach((filter, index) => {
-          gsap.fromTo(filter, 
+          gsap.fromTo(
+            filter,
             {
               x: -50,
-              opacity: 0
+              opacity: 0,
             },
             {
               duration: 0.6,
@@ -1025,10 +1031,11 @@
         });
 
         // Animación de la tabla
-        gsap.fromTo(".reservations-table", 
+        gsap.fromTo(
+          ".reservations-table",
           {
             y: 80,
-            opacity: 0
+            opacity: 0,
           },
           {
             scrollTrigger: {
@@ -1048,10 +1055,11 @@
           ".reservations-table tbody tr"
         );
         tableRows.forEach((row, index) => {
-          gsap.fromTo(row, 
+          gsap.fromTo(
+            row,
             {
               x: -50,
-              opacity: 0
+              opacity: 0,
             },
             {
               scrollTrigger: {
@@ -1175,6 +1183,38 @@
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
+        });
+
+        // Efecto Ripple profesional en todos los botones
+        function createRipple(event) {
+          const button = event.currentTarget;
+          
+          // Evitar que se agregue ripple si el botón está deshabilitado
+          if (button.disabled) return;
+          
+          const ripple = document.createElement("span");
+          const diameter = Math.max(button.clientWidth, button.clientHeight);
+          const radius = diameter / 2;
+
+          ripple.style.width = ripple.style.height = `${diameter}px`;
+          ripple.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+          ripple.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+          ripple.classList.add("ripple");
+
+          const rippleElement = button.getElementsByClassName("ripple")[0];
+          if (rippleElement) {
+            rippleElement.remove();
+          }
+
+          button.appendChild(ripple);
+        }
+
+        // Aplicar efecto ripple a todos los botones del panel admin
+        const allButtons = document.querySelectorAll("button");
+        allButtons.forEach((btn) => {
+          btn.style.position = "relative";
+          btn.style.overflow = "hidden";
+          btn.addEventListener("click", createRipple);
         });
       });
     </script>
