@@ -389,19 +389,19 @@ function showMessage(message, type = 'error') {
     let backgroundColor, className;
     switch (type) {
         case 'success':
-            backgroundColor = '#10b981';
+            backgroundColor = '#4ade80';
             className = 'success-message';
             break;
         case 'info':
-            backgroundColor = '#3b82f6';
+            backgroundColor = '#60a5fa';
             className = 'info-message';
             break;
         case 'warning':
-            backgroundColor = '#f59e0b';
+            backgroundColor = '#fbbf24';
             className = 'warning-message';
             break;
         default: // error
-            backgroundColor = '#ef4444';
+            backgroundColor = '#ff6b6b';
             className = 'error-message';
     }
     

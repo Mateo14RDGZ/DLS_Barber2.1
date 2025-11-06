@@ -160,8 +160,8 @@ function selectHour(hour) {
     const selectedBtn = document.querySelector(`[data-hour="${hour}"]`);
     if (selectedBtn) {
         selectedBtn.classList.add('selected');
-        selectedBtn.style.background = '#ef4444';
-        selectedBtn.style.color = 'white';
+        selectedBtn.style.background = '#d4af37';
+        selectedBtn.style.color = '#1a1a1a';
         selectedBtn.style.transform = 'scale(1.05)';
     }
     

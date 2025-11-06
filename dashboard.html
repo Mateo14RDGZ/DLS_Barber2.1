@@ -249,16 +249,16 @@
       }
 
       .status-completed {
-        background: linear-gradient(135deg, #6b7280, #9ca3af);
-        color: #fff;
-        box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135d, #d4af37, #b8941f);
+        color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
       }
 
       .status-cancelled {
-        background: linear-gradient(135deg, #8b0000, #dc143c);
+        background: linear-gradient(135deg, #ff6b6b, #ef4444);
         color: white;
-        box-shadow: 0 4px 12px rgba(220, 20, 60, 0.4),
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
 
@@ -1165,17 +1165,21 @@
         // Efecto Ripple profesional en todos los botones
         function createRipple(event) {
           const button = event.currentTarget;
-          
+
           // Evitar que se agregue ripple si el botón está deshabilitado
           if (button.disabled) return;
-          
+
           const ripple = document.createElement("span");
           const diameter = Math.max(button.clientWidth, button.clientHeight);
           const radius = diameter / 2;
 
           ripple.style.width = ripple.style.height = `${diameter}px`;
-          ripple.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
-          ripple.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+          ripple.style.left = `${
+            event.clientX - button.getBoundingClientRect().left - radius
+          }px`;
+          ripple.style.top = `${
+            event.clientY - button.getBoundingClientRect().top - radius
+          }px`;
           ripple.classList.add("ripple");
 
           const rippleElement = button.getElementsByClassName("ripple")[0];

@@ -1844,7 +1844,7 @@ button,
 .decorative-separator {
   width: 100%;
   height: 40px;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40"><path d="M0,20 Q300,0 600,20 Q900,40 1200,20 L1200,40 L0,40 Z" fill="%2314b8a6" fill-opacity="0.15"/></svg>')
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40"><path d="M0,20 Q300,0 600,20 Q900,40 1200,20 L1200,40 L0,40 Z" fill="%23d4af37" fill-opacity="0.15"/></svg>')
     repeat-x;
   background-size: 100% 100%;
   margin: 30px 0;
@@ -1853,12 +1853,12 @@ button,
 }
 
 .decorative-separator.wave-top {
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40"><path d="M0,0 Q300,40 600,20 Q900,0 1200,20 L1200,0 L0,0 Z" fill="%2314b8a6" fill-opacity="0.1"/></svg>')
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40"><path d="M0,0 Q300,40 600,20 Q900,0 1200,20 L1200,0 L0,0 Z" fill="%23d4af37" fill-opacity="0.1"/></svg>')
     repeat-x;
 }
 
 .decorative-separator.wave-bottom {
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40"><path d="M0,40 Q300,0 600,20 Q900,40 1200,20 L1200,40 L0,40 Z" fill="%2314b8a6" fill-opacity="0.1"/></svg>')
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40"><path d="M0,40 Q300,0 600,20 Q900,40 1200,20 L1200,40 L0,40 Z" fill="%23d4af37" fill-opacity="0.1"/></svg>')
     repeat-x;
 }
 
@@ -1992,27 +1992,27 @@ button,
 }
 
 .status-pending {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
 }
 
 .status-confirmed {
-  background: linear-gradient(135deg, #4ade80, #059669);
-  color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(74, 222, 128, 0.3);
 }
 
 .status-cancelled {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #ff6b6b, #ef4444);
   color: white;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
 }
 
 .status-completed {
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: white;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #d4af37, #b8941f);
+  color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
 }
 
 /* Mensaje cuando no hay reservas */
