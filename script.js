@@ -316,7 +316,7 @@ window.addEventListener('load', function() {
       
       // Efecto de carga en el botón
       const originalText = confirmBtn.textContent;
-      confirmBtn.style.background = 'linear-gradient(145deg, #dc2626, #991b1b)';
+      confirmBtn.style.background = 'linear-gradient(145deg, #ff6b6b, #ff8787)';
       confirmBtn.textContent = '⏳ Confirmando...';
       confirmBtn.disabled = true;
       
