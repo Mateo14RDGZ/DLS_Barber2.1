@@ -91,7 +91,7 @@ CREATE TABLE available_hours (
 INSERT INTO
     barbers (name, email, phone, specialty)
 VALUES (
-        'Samuel',
+        'Samuel DLS',
         'samuel@dlsbarber.com',
         '098863041',
         'Barbero Profesional'

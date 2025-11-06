@@ -306,35 +306,7 @@ async function confirmReservation() {
         console.log('🔄 Recargando lista de reservas...');
         await loadUserReservations();
         
-        // Debug: Verificar valores antes de crear el mensaje
-        console.log('📧 Creando mensaje de WhatsApp con:', {
-            selectedDate,
-            selectedHour,
-            client_name,
-            client_phone,
-            client_email,
-            notes
-        });
-        
-        // Crear mensaje de WhatsApp ANTES de limpiar el formulario
-        const mensaje = `🔥 NUEVA RESERVA - DLS BARBER 💈
-
-📅 Fecha: ${selectedDate}
-⏰ Hora: ${selectedHour}
-👤 Cliente: ${client_name}
-📞 Teléfono: ${client_phone}
-${client_email ? `📧 Email: ${client_email}` : ''}
-${notes ? `📝 Notas: ${notes}` : ''}
-
-¡Reserva confirmada! 🎉`;
-        
-        console.log('📱 Mensaje de WhatsApp creado:', mensaje);
-        
-        // Abrir WhatsApp
-        const whatsappUrl = `https://wa.me/59898863041?text=${encodeURIComponent(mensaje)}`;
-        window.open(whatsappUrl, '_blank');
-        
-        // Limpiar formulario DESPUÉS de crear el mensaje
+        // Limpiar formulario
         resetForm();
         
         // Recargar reservas

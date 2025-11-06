@@ -131,7 +131,7 @@ const initializeSQLite = () => {
         // Insertar datos iniciales
         sqlite.run(`
             INSERT OR IGNORE INTO barbers (id, name, email, phone, specialty) 
-            VALUES (1, 'Samuel', 'samuel@dlsbarber.com', '098863041', 'Barbero Profesional')
+            VALUES (1, 'Samuel DLS', 'samuel@dlsbarber.com', '098863041', 'Barbero Profesional')
         `);
 
         sqlite.run(`
