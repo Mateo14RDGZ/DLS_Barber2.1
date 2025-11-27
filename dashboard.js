@@ -369,8 +369,29 @@ async function loadUserReservations() {
             return dateB - dateA;
         });
         
-        console.log('✅ Mostrando', sortedReservations.length, 'reservas');
-        reservationsList.innerHTML = sortedReservations.map(reservation => {
+        // Filtrar reservas para mostrar solo las futuras o de hoy
+        const now = new Date();
+        const activeReservations = sortedReservations.filter(reservation => {
+            const reservationDateTime = new Date(`${reservation.reservation_date} ${reservation.reservation_time}`);
+            // Mantener reservas del día actual y futuras
+            return reservationDateTime.toDateString() >= now.toDateString() || 
+                   (reservationDateTime.toDateString() === now.toDateString());
+        });
+        
+        console.log('✅ Mostrando', activeReservations.length, 'reservas activas');
+        
+        if (activeReservations.length === 0) {
+            console.log('ℹ️ No hay reservas activas para mostrar');
+            reservationsList.innerHTML = `
+                <div class="no-reservations">
+                    <h4>📋 No tienes reservas próximas</h4>
+                    <p>¡Programa tu próxima cita con nuestros barberos profesionales!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        reservationsList.innerHTML = activeReservations.map(reservation => {
             const reservationDate = new Date(reservation.reservation_date);
             const formattedDate = reservationDate.toLocaleDateString('es-ES', {
                 weekday: 'long',
