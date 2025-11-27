@@ -212,7 +212,7 @@
 
       .btn-confirm {
         background: linear-gradient(135deg, #d4af37, #f4e4c1);
-        color: #1a1a1a;
+        color: #2a2416;
         font-weight: bold;
       }
 
@@ -534,14 +534,14 @@
 
       .status-pending {
         background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        color: #1a1a1a;
+        color: #2a2416;
         box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.3);
       }
 
       .status-confirmed {
         background: linear-gradient(135deg, #d4af37, #f4e4c1);
-        color: #1a1a1a;
+        color: #2a2416;
         box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.3);
       }
@@ -1134,7 +1134,8 @@
             mutations.forEach(function (mutation) {
               if (mutation.attributeName === "style") {
                 if (modal.style.display === "flex") {
-                  gsap.fromTo(".modal-content", 
+                  gsap.fromTo(
+                    ".modal-content",
                     {
                       scale: 0.85,
                       opacity: 0,
