@@ -575,24 +575,6 @@
         overflow: hidden;
       }
 
-      .btn-small::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-      }
-
-      .btn-small:hover::before {
-        width: 300px;
-        height: 300px;
-      }
-
       .btn-small:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -604,7 +586,7 @@
 
       .btn-confirm {
         background: linear-gradient(135deg, #d4af37, #f4e4c1);
-        color: #1a1a1a;
+        color: #2a2416;
         box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
       }
 
@@ -630,9 +612,8 @@
       }
 
       .btn-details:hover {
-        background: linear-gradient(135deg, #d4af37, #f4e4c1);
-        color: #1a1a1a;
-        border-color: transparent;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
         box-shadow: 0 8px 20px rgba(212, 175, 55, 0.5);
       }
 
@@ -656,28 +637,9 @@
         overflow: hidden;
       }
 
-      .logout-btn::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-      }
-
-      .logout-btn:hover::before {
-        width: 300px;
-        height: 300px;
-      }
-
       .logout-btn:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 24px rgba(212, 175, 55, 0.6),
-          inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 24px rgba(255, 107, 107, 0.6);
       }
 
       .logout-btn:active {
