@@ -152,17 +152,12 @@ function selectHour(hour) {
     // Actualizar UI
     document.querySelectorAll('.hora-btn').forEach(btn => {
         btn.classList.remove('selected');
-        btn.style.background = '';
-        btn.style.color = '';
     });
     
     // Agregar clase selected al botón clickeado
     const selectedBtn = document.querySelector(`[data-hour="${hour}"]`);
     if (selectedBtn) {
         selectedBtn.classList.add('selected');
-        selectedBtn.style.background = '#d4af37';
-        selectedBtn.style.color = '#1a1a1a';
-        selectedBtn.style.transform = 'scale(1.05)';
     }
     
     // Mostrar mensaje de confirmación
