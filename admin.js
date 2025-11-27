@@ -93,9 +93,20 @@ async function loadAllReservations() {
         
         const data = await apiRequest('/reservations/all');
         allReservations = data.reservations;
+        
+        // Filtrar reservas para mostrar solo las actuales y futuras
+        const now = new Date();
+        const activeReservations = allReservations.filter(reservation => {
+            const reservationDateTime = new Date(`${reservation.reservation_date} ${reservation.reservation_time}`);
+            // Mantener reservas del día actual y futuras
+            return reservationDateTime.toDateString() >= now.toDateString() || 
+                   (reservationDateTime.toDateString() === now.toDateString());
+        });
+        
+        allReservations = activeReservations;
         filteredReservations = [...allReservations];
         
-        console.log('✅ Reservas cargadas:', allReservations.length);
+        console.log('✅ Reservas activas cargadas:', allReservations.length);
         
         // Ocultar loading
         loadingElement.style.display = 'none';
