@@ -388,7 +388,7 @@ async function loadUserReservations() {
             let timeIndicator = '';
             
             if (reservationDateTime < now) {
-                timeIndicator = '⏰ Reserva pasada';
+                timeIndicator = '⏰ Pasada';
             } else if (reservationDateTime.toDateString() === now.toDateString()) {
                 timeIndicator = '🎯 Hoy';
             } else {
@@ -398,7 +398,11 @@ async function loadUserReservations() {
                     timeIndicator = '⏳ Mañana';
                 } else {
                     const diffDays = Math.ceil((reservationDateTime - now) / (1000 * 60 * 60 * 24));
-                    timeIndicator = `⏳ En ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+                    if (!isNaN(diffDays) && diffDays > 0) {
+                        timeIndicator = `⏳ En ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+                    } else {
+                        timeIndicator = '📅 Próxima';
+                    }
                 }
             }
             
@@ -407,16 +411,13 @@ async function loadUserReservations() {
                     <div class="reservation-status">
                         <span class="status-badge status-${reservation.status}">${getStatusText(reservation.status)}</span>
                     </div>
-                    <h4>💇‍♂️ ${reservation.service_name}</h4>
+                    <h4>💇‍♂️ ${reservation.service_name || 'Corte de cabello'}</h4>
                     <div class="reservation-details">
-
-                        <p><strong>� Fecha:</strong> ${formattedDate}</p>
+                        <p><strong>👤 Cliente:</strong> ${reservation.client_name || 'No especificado'}</p>
+                        <p><strong>📅 Fecha:</strong> ${formattedDate}</p>
                         <p><strong>🕐 Hora:</strong> ${formattedTime}</p>
-                        <p><strong>� Teléfono:</strong> ${reservation.client_phone}</p>
-                        <p><strong>✉️ Email:</strong> ${reservation.client_email || reservation.user_email || 'No disponible'}</p>
-
-
-                        ${reservation.notes ? `<p><strong>� Notas:</strong> ${reservation.notes}</p>` : ''}
+                        <p><strong>📞 Teléfono:</strong> ${reservation.client_phone || 'No disponible'}</p>
+                        ${reservation.notes ? `<p><strong>📝 Notas:</strong> ${reservation.notes}</p>` : ''}
                     </div>
                     <div class="reservation-footer">
                         <small>Reserva #${reservation.id} • ${timeIndicator}</small>
