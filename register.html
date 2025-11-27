@@ -179,24 +179,6 @@
         }
       }
 
-      .auth-button::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-      }
-
-      .auth-button:hover::before {
-        width: 300px;
-        height: 300px;
-      }
-
       .auth-button:hover {
         transform: translateY(-3px) scale(1.02);
         box-shadow: 0 8px 24px rgba(212, 175, 55, 0.6),
